@@ -27,7 +27,7 @@ export interface SheetView {
   rows: DisplayRow[];
 }
 
-export function buildSheetView(sheet: ParsedSheet): SheetView {
+export function buildSheetView(sheet: ParsedSheet, sortByTotalDesc = false): SheetView {
   const columns: DisplayColumn[] = sheet.columns.map((c) => ({
     index: c.index,
     field: c.field,
@@ -46,6 +46,23 @@ export function buildSheetView(sheet: ParsedSheet): SheetView {
     });
     return { alcCode: cell(row, sheet.coreCols.alcCode), cells };
   });
+
+  // Sabse zyada Total Points wala row sabse upar (descending order).
+  // Sirf tab lagu hota hai jab caller explicitly sortByTotalDesc true bheje
+  // (Home Dashboard ke liye) — baaki sab jagah rows apne original sheet
+  // order me hi rehti hain, kuch bhi extra calculate nahi hota.
+  if (sortByTotalDesc) {
+    const totalColIndexes = columns.filter((c) => c.isTotal).map((c) => c.index);
+    if (totalColIndexes.length > 0) {
+      const totalOf = (r: DisplayRow) =>
+        columns.reduce((sum, col, i) => {
+          if (!totalColIndexes.includes(col.index)) return sum;
+          const n = parseFloat(r.cells[i]);
+          return sum + (isNaN(n) ? 0 : n);
+        }, 0);
+      rows.sort((a, b) => totalOf(b) - totalOf(a));
+    }
+  }
 
   return { columns, rows };
 }

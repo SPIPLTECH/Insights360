@@ -62,7 +62,9 @@ export async function loadDashboardData(): Promise<
     const index4 = calculateIndex4Stats(parsed4);
 
     const views = {
-      home: buildSheetView(parsedHome),
+      // Home Dashboard: sabse zyada Total Points wala ALC sabse top pe,
+      // uske niche usse kam wala, aage bhi wahi order (descending).
+      home: buildSheetView(parsedHome, true),
       index1: buildSheetView(parsed1),
       index2: buildSheetView(parsed2),
       index3: buildSheetView(parsed3),

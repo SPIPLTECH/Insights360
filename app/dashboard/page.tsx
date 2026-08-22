@@ -56,8 +56,8 @@ export default function DashboardPage() {
       />
 
       <div className="px-4 md:px-0 mt-6">
-        <div className="card overflow-hidden">
-          <div className="p-4 border-b border-slate-100 space-y-3">
+        <div className="card">
+          <div className="bg-white rounded-t-2xl p-4 border-b border-slate-100 space-y-3">
             <div className="flex items-center gap-2">
               <span className="text-lg">🏆</span>
               <h2 className="font-bold text-slate-800">Home Dashboard — All ALCs</h2>

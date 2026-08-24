@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "seed": "tsx scripts/seed.ts"
+    "seed": "tsx scripts/seed.ts",
+    "get-google-token": "tsx scripts/getGoogleRefreshToken.ts",
+    "test-sheet-write": "tsx scripts/testSheetWrite.ts"
   },
   "dependencies": {
     "next": "14.2.35",

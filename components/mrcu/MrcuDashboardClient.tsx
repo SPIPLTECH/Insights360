@@ -52,8 +52,17 @@ export default function MrcuDashboardClient({ displayName }: { displayName: stri
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ decision }),
       });
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.error || "Review failed.");
+      const text = await res.text();
+      let json: any = {};
+      try {
+        json = text ? JSON.parse(text) : {};
+      } catch {
+        // Server returned a non-JSON error page (e.g. a raw 500 crash) —
+        // surface the raw text so the real problem is visible instead of
+        // a confusing "Unexpected end of JSON input" message.
+        throw new Error(text || `Request failed with status ${res.status}.`);
+      }
+      if (!res.ok) throw new Error(json.error || `Request failed with status ${res.status}.`);
       refresh();
     } catch (err: any) {
       setError(err.message);

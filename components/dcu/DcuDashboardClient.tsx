@@ -50,8 +50,11 @@ export default function DcuDashboardClient({ district, displayName }: { district
   const [auditNotes, setAuditNotes] = useState("");
   const [auditFile, setAuditFile] = useState<File | null>(null);
 
-  const [socialPlatform, setSocialPlatform] = useState("");
-  const [socialLink, setSocialLink] = useState("");
+  // Social media individual links
+  const [instagramLink, setInstagramLink] = useState("");
+  const [facebookLink, setFacebookLink] = useState("");
+  const [youtubeLink, setYoutubeLink] = useState("");
+  const [otherLink, setOtherLink] = useState("");
 
   const [months, setMonths] = useState<{ month: string; mscitAdmissions: string; klicAdmissions: string }[]>([
     { month: "", mscitAdmissions: "", klicAdmissions: "" },
@@ -110,9 +113,18 @@ export default function DcuDashboardClient({ district, displayName }: { district
         if (auditFile) fileUrls.push(await uploadToCloudinary(auditFile));
         payload.auditNotes = auditNotes;
       } else if (tab === "social_media") {
-        if (!socialPlatform || !socialLink) throw new Error("Platform name and link are required.");
-        payload.socialPlatform = socialPlatform;
-        payload.socialLink = socialLink;
+        const platforms = [];
+        const links = [];
+        
+        if (instagramLink) { platforms.push("Instagram"); links.push(instagramLink); }
+        if (facebookLink) { platforms.push("Facebook"); links.push(facebookLink); }
+        if (youtubeLink) { platforms.push("YouTube"); links.push(youtubeLink); }
+        if (otherLink) { platforms.push("Other"); links.push(otherLink); }
+
+        if (platforms.length === 0) throw new Error("Please provide at least one social media link.");
+        
+        payload.socialPlatform = platforms.join(", ");
+        payload.socialLink = links.join(", ");
       } else if (tab === "monthly_enrolment") {
         const cleaned = months
           .filter((m) => m.month)
@@ -143,8 +155,10 @@ export default function DcuDashboardClient({ district, displayName }: { district
       setAttendanceFile(null);
       setAuditNotes("");
       setAuditFile(null);
-      setSocialPlatform("");
-      setSocialLink("");
+      setInstagramLink("");
+      setFacebookLink("");
+      setYoutubeLink("");
+      setOtherLink("");
       setMonths([{ month: "", mscitAdmissions: "", klicAdmissions: "" }]);
     } catch (err: any) {
       setMessage({ type: "error", text: err.message });
@@ -262,28 +276,45 @@ export default function DcuDashboardClient({ district, displayName }: { district
             )}
 
             {tab === "social_media" && (
-              <>
+              <div className="space-y-4">
+                <p className="text-xs text-slate-400 mb-2">Provide links for the platforms you use (at least one is required).</p>
                 <div>
-                  <label className="text-xs font-semibold text-slate-500">Platform Name</label>
+                  <label className="text-xs font-semibold text-slate-500">Instagram Link</label>
                   <input
-                    value={socialPlatform}
-                    onChange={(e) => setSocialPlatform(e.target.value)}
+                    value={instagramLink}
+                    onChange={(e) => setInstagramLink(e.target.value)}
                     className="mt-1 w-full border border-slate-200 rounded-xl px-3 py-2 text-sm"
-                    placeholder="e.g. Instagram"
-                    required
+                    placeholder="https://instagram.com/..."
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-semibold text-slate-500">Link</label>
+                  <label className="text-xs font-semibold text-slate-500">Facebook Link</label>
                   <input
-                    value={socialLink}
-                    onChange={(e) => setSocialLink(e.target.value)}
+                    value={facebookLink}
+                    onChange={(e) => setFacebookLink(e.target.value)}
+                    className="mt-1 w-full border border-slate-200 rounded-xl px-3 py-2 text-sm"
+                    placeholder="https://facebook.com/..."
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-slate-500">YouTube Link</label>
+                  <input
+                    value={youtubeLink}
+                    onChange={(e) => setYoutubeLink(e.target.value)}
+                    className="mt-1 w-full border border-slate-200 rounded-xl px-3 py-2 text-sm"
+                    placeholder="https://youtube.com/..."
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-slate-500">Other Link</label>
+                  <input
+                    value={otherLink}
+                    onChange={(e) => setOtherLink(e.target.value)}
                     className="mt-1 w-full border border-slate-200 rounded-xl px-3 py-2 text-sm"
                     placeholder="https://..."
-                    required
                   />
                 </div>
-              </>
+              </div>
             )}
 
             {tab === "monthly_enrolment" && (

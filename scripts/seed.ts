@@ -8,7 +8,8 @@
  * Re-running this script is safe — it upserts by username, so it just
  * resets the password/role/district if the user already exists.
  */
-import "dotenv/config";
+import { config } from "dotenv";
+config({ path: ".env.local" });
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import User from "../models/User";

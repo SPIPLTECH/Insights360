@@ -8,5 +8,6 @@ export default function Index2Page() {
       description="Index 2 · MoM, AI Masterclass, SSC/HSC, ODOT · 200 pts"
       sourceLabel="Google Sheet 1 — Index-2"
     />
+    
   );
 }

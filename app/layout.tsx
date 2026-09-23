@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import BottomNav from "@/components/layout/BottomNav";
+
 
 export const metadata: Metadata = {
   title: "Insights360 — Race to Recognition Dashboard",
@@ -12,7 +12,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body className="min-h-screen pb-24 md:pb-8">
         <div className="max-w-7xl mx-auto">{children}</div>
-        <BottomNav />
+
       </body>
     </html>
   );

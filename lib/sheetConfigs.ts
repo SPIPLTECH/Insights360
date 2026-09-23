@@ -88,6 +88,9 @@ export const INDEX2_CONFIG: SheetConfig = {
 // ---------------------------------------------------------------------
 // Index-3  —  Learning Excellence  (Sheet 1, tab "Index-3")
 // Two top-level sections (MSCIT, KLiC), each with their own metrics.
+// UPDATED: column positions now match the actual template exactly
+// (0-based) — a "Bonus Points" column follows each section's
+// Total Points column, matching the real sheet layout.
 // ---------------------------------------------------------------------
 export const INDEX3_CONFIG: SheetConfig = {
   headerRowCount: 4,
@@ -97,38 +100,34 @@ export const INDEX3_CONFIG: SheetConfig = {
     // ---- MSCIT section ----
     { index: 4, field: "Target Achieved", groupPath: ["MSCIT", "Timely Learning Start"] },
     { index: 5, field: "Points", groupPath: ["MSCIT", "Timely Learning Start"] },
-    { index: 6, field: "Bonus Points", groupPath: ["MSCIT", "Timely Learning Start"] },
-    { index: 7, field: "Consistency?", groupPath: ["MSCIT", "Learning Consistency"] },
-    { index: 8, field: "Points", groupPath: ["MSCIT", "Learning Consistency"] },
-    { index: 9, field: "Bonus Points", groupPath: ["MSCIT", "Learning Consistency"] },
-    { index: 10, field: "Target Achieved", groupPath: ["MSCIT", "Course Completion"] },
-    { index: 11, field: "Points", groupPath: ["MSCIT", "Course Completion"] },
-    { index: 12, field: "Bonus Points", groupPath: ["MSCIT", "Course Completion"] },
-    { index: 13, field: "Yes/No", groupPath: ["MSCIT", "Biometric Attendance"] },
-    { index: 14, field: "Points", groupPath: ["MSCIT", "Biometric Attendance"] },
-    { index: 15, field: "Installed", groupPath: ["MSCIT", "Learner App"] },
-    { index: 16, field: "Points", groupPath: ["MSCIT", "Learner App"] },
-    { index: 17, field: "Yes/No", groupPath: ["MSCIT", "Certification Success"] },
-    { index: 18, field: "Points", groupPath: ["MSCIT", "Certification Success"] },
-    { index: 19, field: "Total Points(120)", groupPath: ["MSCIT"] },
-    
+    { index: 6, field: "Consistency?", groupPath: ["MSCIT", "Learning Consistency"] },
+    { index: 7, field: "Points", groupPath: ["MSCIT", "Learning Consistency"] },
+    { index: 8, field: "Target Achieved", groupPath: ["MSCIT", "Course Completion"] },
+    { index: 9, field: "Points", groupPath: ["MSCIT", "Course Completion"] },
+    { index: 10, field: "Yes/No", groupPath: ["MSCIT", "Biometric Attendance"] },
+    { index: 11, field: "Points", groupPath: ["MSCIT", "Biometric Attendance"] },
+    { index: 12, field: "Installed", groupPath: ["MSCIT", "Learner App"] },
+    { index: 13, field: "Points", groupPath: ["MSCIT", "Learner App"] },
+    { index: 14, field: "Success%", groupPath: ["MSCIT", "Certification Success"] },
+    { index: 15, field: "Points", groupPath: ["MSCIT", "Certification Success"] },
+    { index: 16, field: "Total Points(120)", groupPath: ["MSCIT"] },
+    { index: 17, field: "MSCIT Credit Points", groupPath: ["MSCIT"] },
+
     // ---- KLiC section ----
-    { index: 21, field: "Target Achieved", groupPath: ["KLiC", "Timely Learning Start"] },
-    { index: 22, field: "Points", groupPath: ["KLiC", "Timely Learning Start"] },
-    { index: 23, field: "Bonus Points", groupPath: ["KLiC", "Timely Learning Start"] },
-    { index: 24, field: "Consistency?", groupPath: ["KLiC", "Learning Consistency"] },
-    { index: 25, field: "Points", groupPath: ["KLiC", "Learning Consistency"] },
-    { index: 26, field: "Bonus Points", groupPath: ["KLiC", "Learning Consistency"] },
-    { index: 27, field: "Target Achieved", groupPath: ["KLiC", "Course Completion"] },
-    { index: 28, field: "Points", groupPath: ["KLiC", "Course Completion"] },
-    { index: 29, field: "Bonus Points", groupPath: ["KLiC", "Course Completion"] },
-    { index: 30, field: "Yes/No", groupPath: ["KLiC", "Certification Success"] },
-    { index: 31, field: "Points", groupPath: ["KLiC", "Certification Success"] },
-    { index: 32, field: "Total Points(80)", groupPath: ["KLiC"] },
-    
-    { index: 34, field: "Total Points(200)", groupPath: [] },
-    { index: 35, field: "Bonus Points", groupPath: [] },
-    { index: 36, field: "Eligible/Not Eligible", groupPath: [] },
+    { index: 19, field: "Target Achieved", groupPath: ["KLiC", "Timely Learning Start"] },
+    { index: 20, field: "Points", groupPath: ["KLiC", "Timely Learning Start"] },
+    { index: 21, field: "Consistency?", groupPath: ["KLiC", "Learning Consistency"] },
+    { index: 22, field: "Points", groupPath: ["KLiC", "Learning Consistency"] },
+    { index: 23, field: "Target Achieved", groupPath: ["KLiC", "Course Completion"] },
+    { index: 24, field: "Points", groupPath: ["KLiC", "Course Completion"] },
+    { index: 25, field: "Yes/No", groupPath: ["KLiC", "Certification Success"] },
+    { index: 26, field: "Points", groupPath: ["KLiC", "Certification Success"] },
+    { index: 27, field: "Total Points(80)", groupPath: ["KLiC"] },
+    { index: 28, field: "KLiC Credits Points", groupPath: ["KLiC"] },
+
+    { index: 30, field: "Total Points(200)", groupPath: [] },
+    { index: 31, field: "Total Credit Points", groupPath: [] },
+    { index: 32, field: "Eligible/Not Eligible", groupPath: [] },
   ],
 };
 
@@ -158,24 +157,28 @@ export const INDEX4_CONFIG: SheetConfig = {
 // This tab already has its own formulas for Points/Bonus/Eligible/Total/
 // Level per ALC — the dashboard just mirrors these cells, nothing here
 // is recalculated in code.
+//
+// groupPath is split into 2 levels ["Index N", "Section Name"] so the
+// table header renders as 3 stacked rows: Index N -> Section Name ->
+// Points/Bonus Points/Eligibility Status.
 // ---------------------------------------------------------------------
 export const HOME_CONFIG: SheetConfig = {
   headerRowCount: 2,
   coreCols: CORE,
   columns: [
     ...CORE_COLUMNS,
-    { index: 4, field: "Points", groupPath: ["Index-1 Business Growth"] },
-    { index: 5, field: "Bonus Points", groupPath: ["Index-1 Business Growth"] },
-    { index: 6, field: "Eligible/Not Eligible", groupPath: ["Index-1 Business Growth"] },
-    { index: 7, field: "Points", groupPath: ["Index 2 - Ecosystem Participation"] },
-    { index: 8, field: "Bonus Points", groupPath: ["Index 2 - Ecosystem Participation"] },
-    { index: 9, field: "Eligible/Not Eligible", groupPath: ["Index 2 - Ecosystem Participation"] },
-    { index: 10, field: "Points", groupPath: ["Index 3 - Learning Excellence"] },
-    { index: 11, field: "Bonus Points", groupPath: ["Index 3 - Learning Excellence"] },
-    { index: 12, field: "Eligible/Not Eligible", groupPath: ["Index 3 - Learning Excellence"] },
-    { index: 13, field: "Points", groupPath: ["Index 4 - Professional Excellence Index"] },
-    { index: 14, field: "Bonus Points", groupPath: ["Index 4 - Professional Excellence Index"] },
-    { index: 15, field: "Eligible/Not Eligible", groupPath: ["Index 4 - Professional Excellence Index"] },
+    { index: 4, field: "Points", groupPath: ["Index 1", "Business Growth"] },
+    { index: 5, field: "Bonus Points", groupPath: ["Index 1", "Business Growth"] },
+    { index: 6, field: "Eligible/Not Eligible", groupPath: ["Index 1", "Business Growth"] },
+    { index: 7, field: "Points", groupPath: ["Index 2", "Ecosystem Participation"] },
+    { index: 8, field: "Bonus Points", groupPath: ["Index 2", "Ecosystem Participation"] },
+    { index: 9, field: "Eligible/Not Eligible", groupPath: ["Index 2", "Ecosystem Participation"] },
+    { index: 10, field: "Points", groupPath: ["Index 3", "Learning Excellence"] },
+    { index: 11, field: "Bonus Points", groupPath: ["Index 3", "Learning Excellence"] },
+    { index: 12, field: "Eligible/Not Eligible", groupPath: ["Index 3", "Learning Excellence"] },
+    { index: 13, field: "Points", groupPath: ["Index 4", "Professional Excellence"] },
+    { index: 14, field: "Bonus Points", groupPath: ["Index 4", "Professional Excellence"] },
+    { index: 15, field: "Eligible/Not Eligible", groupPath: ["Index 4", "Professional Excellence"] },
     { index: 16, field: "Total Points(850)", groupPath: [] },
     { index: 17, field: "Bonus Points", groupPath: [] },
     { index: 18, field: "Level", groupPath: [] },

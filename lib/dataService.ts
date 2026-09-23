@@ -7,6 +7,7 @@ import {
   calculateIndex2Stats,
   calculateIndex3Stats,
   calculateIndex4Stats,
+  computeAwardLevels,
 } from "./calculations";
 
 export const REVALIDATE_SECONDS = Number(process.env.REVALIDATE_SECONDS ?? 8);
@@ -20,9 +21,14 @@ export interface FullDashboardData {
   // Exact-format table views, matching the source template's own column
   // layout/labels 1:1 (used to render Home/Index-1..4 pages without
   // inventing any columns, or calculating any values, that aren't
-  // already in the template — every cell (including Total Points,
-  // Bonus Points, and Level on the Home tab) is read straight from its
-  // sheet cell.
+  // already in the template — every cell (including Total Points and
+  // Bonus Points) is read straight from its sheet cell.
+  //
+  // The ONE exception is the Home tab's "Level" cell: it is overridden
+  // in code (see below) so that Platinum/Gold/Silver/Bronze can only be
+  // assigned when an ALC clears the min-points bar in ALL 4 indexes —
+  // a rule the sheet's own per-row formula cannot express reliably
+  // across tabs. See computeAwardLevels() in calculations.ts.
   views: {
     home: SheetView;
     index1: SheetView;
@@ -70,6 +76,24 @@ export async function loadDashboardData(): Promise<
       index3: buildSheetView(parsed3),
       index4: buildSheetView(parsed4),
     };
+
+    // ---- Level override (Home tab only) --------------------------------
+    // Everything else on views.home stays exactly as read from the sheet.
+    // Only the "Level" column's cell values are replaced, per-row, with
+    // the eligibility-gated result: an ALC only gets Platinum / Gold /
+    // Silver / Bronze if it clears the min-points bar in ALL 4 indexes;
+    // otherwise it is marked "Not Eligible", regardless of total points.
+    const levelColIndex = views.home.columns.findIndex((c) => /^level$/i.test(c.field));
+    if (levelColIndex >= 0) {
+      const awardLevels = computeAwardLevels(index1, index2, index3, index4);
+      for (const row of views.home.rows) {
+        const level = awardLevels.get(row.alcCode);
+        if (level) {
+          row.cells[levelColIndex] = level;
+        }
+      }
+    }
+    // ---------------------------------------------------------------------
 
     return {
       ok: true,

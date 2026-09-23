@@ -41,6 +41,7 @@ export default function DcuDashboardClient({ district, displayName }: { district
   const [submissions, setSubmissions] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: "ok" | "error"; text: string } | null>(null);
+  const [exporting, setExporting] = useState(false);
 
   // form state
   const [attendancePercent, setAttendancePercent] = useState("");
@@ -79,6 +80,35 @@ export default function DcuDashboardClient({ district, displayName }: { district
     await fetch("/api/auth/logout", { method: "POST" });
     router.push("/dcu/login");
     router.refresh();
+  }
+
+  async function handleExport() {
+    setExporting(true);
+    setMessage(null);
+    try {
+      const res = await fetch("/api/dcu/export", { cache: "no-store" });
+      if (!res.ok) {
+        const json = await res.json().catch(() => null);
+        throw new Error(json?.error?.message || "Export failed. Please try again.");
+      }
+      const blob = await res.blob();
+      const disposition = res.headers.get("Content-Disposition") || "";
+      const match = disposition.match(/filename="([^"]+)"/);
+      const filename = match ? match[1] : `${district}_Insights360_Export.xlsx`;
+
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err: any) {
+      setMessage({ type: "error", text: err.message || "Export failed. Please try again." });
+    } finally {
+      setExporting(false);
+    }
   }
 
   function addMonthRow() {
@@ -176,12 +206,21 @@ export default function DcuDashboardClient({ district, displayName }: { district
             <h1 className="text-xl md:text-2xl font-bold mt-1">{district} District</h1>
             <p className="text-sm text-white/85">{displayName}</p>
           </div>
-          <button
-            onClick={handleLogout}
-            className="bg-white/15 hover:bg-white/25 transition-colors text-sm rounded-xl px-3 py-2"
-          >
-            Logout
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleExport}
+              disabled={exporting}
+              className="bg-white/15 hover:bg-white/25 transition-colors text-sm rounded-xl px-3 py-2 disabled:opacity-60"
+            >
+              {exporting ? "Exporting…" : "Export Data"}
+            </button>
+            <button
+              onClick={handleLogout}
+              className="bg-white/15 hover:bg-white/25 transition-colors text-sm rounded-xl px-3 py-2"
+            >
+              Logout
+            </button>
+          </div>
         </div>
       </header>
 

@@ -114,8 +114,90 @@ export function calculateIndex4Stats(sheet: ParsedSheet): IndexStats {
   return buildStats(buildRecords(sheet, "Professional Excellence"), "Professional Excellence");
 }
 
-// Note: the combined Home Dashboard (Total Points / Bonus Points / Level,
-// ranked across all ALCs) is NOT built here anymore. It comes straight
-// from the sheet's own "Home Dashboard" tab (see sheetConfigs.ts →
-// HOME_CONFIG and dataService.ts), which already has its own formulas —
-// the app just displays that tab's cells as-is, with zero recalculation.
+// Note: the combined Home Dashboard (Total Points / Bonus Points, ranked
+// across all ALCs) is NOT built here. It comes straight from the sheet's
+// own "Home Dashboard" tab (see sheetConfigs.ts → HOME_CONFIG and
+// dataService.ts), which already has its own formulas — the app just
+// displays that tab's cells as-is, with zero recalculation.
+
+// ---------------------------------------------------------------------
+// Award Level (Platinum / Gold / Silver / Bronze) — the ONLY calculated
+// exception on the Home tab.
+//
+// Rule: an ALC is only eligible for ANY level if it clears the min-points
+// bar in EVERY one of the 4 indexes (Index1 >= 88, Index2 >= 50,
+// Index3 >= 30, Index4 >= 25). If even one index is below its minimum,
+// the ALC is "Not Eligible" — no matter how high its total points are.
+//
+// Only once ALL 4 minimums are cleared does the combined total (out of
+// 850, i.e. the sum of the 4 index totals) get compared against the
+// award bands below to pick the level.
+// ---------------------------------------------------------------------
+
+export const INDEX_MIN_POINTS = {
+  index1: 88,
+  index2: 50,
+  index3: 30,
+  index4: 25,
+} as const;
+
+export type AwardLevel = "Platinum" | "Gold" | "Silver" | "Bronze" | "Not Eligible";
+
+function levelForTotal(total: number): AwardLevel {
+  if (total >= 765) return "Platinum";
+  if (total >= 637) return "Gold";
+  if (total >= 510) return "Silver";
+  if (total >= 425) return "Bronze";
+  return "Not Eligible";
+}
+
+/**
+ * Computes the Award Level for every ALC by matching records (by
+ * alcCode) across the 4 index stats. Returns a map of alcCode -> level,
+ * to be used ONLY to override the Home Dashboard's "Level" column cell
+ * (which otherwise comes as-is from the sheet). Nothing else about the
+ * 4 index pages or their own totals is touched.
+ */
+export function computeAwardLevels(
+  index1: IndexStats,
+  index2: IndexStats,
+  index3: IndexStats,
+  index4: IndexStats
+): Map<string, AwardLevel> {
+  const byCode1 = new Map(index1.records.map((r) => [r.alcCode, r]));
+  const byCode2 = new Map(index2.records.map((r) => [r.alcCode, r]));
+  const byCode3 = new Map(index3.records.map((r) => [r.alcCode, r]));
+  const byCode4 = new Map(index4.records.map((r) => [r.alcCode, r]));
+
+  const allCodes = new Set<string>([
+    ...byCode1.keys(),
+    ...byCode2.keys(),
+    ...byCode3.keys(),
+    ...byCode4.keys(),
+  ]);
+
+  const result = new Map<string, AwardLevel>();
+
+  for (const code of allCodes) {
+    const p1 = byCode1.get(code)?.totalPoints ?? 0;
+    const p2 = byCode2.get(code)?.totalPoints ?? 0;
+    const p3 = byCode3.get(code)?.totalPoints ?? 0;
+    const p4 = byCode4.get(code)?.totalPoints ?? 0;
+
+    const meetsMin =
+      p1 >= INDEX_MIN_POINTS.index1 &&
+      p2 >= INDEX_MIN_POINTS.index2 &&
+      p3 >= INDEX_MIN_POINTS.index3 &&
+      p4 >= INDEX_MIN_POINTS.index4;
+
+    if (!meetsMin) {
+      result.set(code, "Not Eligible");
+      continue;
+    }
+
+    const total = p1 + p2 + p3 + p4;
+    result.set(code, levelForTotal(total));
+  }
+
+  return result;
+}

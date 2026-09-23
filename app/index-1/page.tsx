@@ -7,6 +7,8 @@ export default function Index1Page() {
       title="Business Growth"
       description="Index 1 · MSCIT, KLiC & CCTP admissions · 350 pts"
       sourceLabel="Google Sheet 1 — Index-1"
+      
     />
+    
   );
 }

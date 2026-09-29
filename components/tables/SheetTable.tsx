@@ -34,6 +34,10 @@ import type { DisplayColumn, DisplayRow } from "@/lib/sheetView";
  *   own Bonus Points AND the grand-total "Bonus Points" column) from
  *   header + body. No data/calculation change — purely display.
  *
+ * hideTotalCap (opt-in, used ONLY by Home Dashboard):
+ * - Removes the "/850" (max points) suffix from every Total Points cell,
+ *   because the column heading already says "Total Points(850)".
+ *
  * Column-group separators:
  * - Every top-level group (Index 1, Index 2, Index 3, Index 4 ...) gets a
  *   vertical line on both its left and right edge, so each index's whole
@@ -103,6 +107,7 @@ export default function SheetTable({
   rows,
   hideEligibilityColumn = false,
   hideBonusColumn = false,
+  hideTotalCap = false,
 }: {
   columns: DisplayColumn[];
   rows: DisplayRow[];
@@ -110,6 +115,10 @@ export default function SheetTable({
   /** Removes every "Bonus Points" column (per-section AND the grand-total
    * one) entirely from header + body. Opt-in, used by Home Dashboard. */
   hideBonusColumn?: boolean;
+  /** Hides the small "/850" (max points) suffix shown next to every
+   * Total Points value. Opt-in, used ONLY by Home Dashboard (the header
+   * already says "Total Points(850)"). Index 1-4 pages are unaffected. */
+  hideTotalCap?: boolean;
 }) {
   if (columns.length === 0) {
     return <div className="p-10 text-center text-slate-400 text-sm">Sheet structure could not be read.</div>;
@@ -330,7 +339,7 @@ export default function SheetTable({
                         }`}
                       >
                         {displayValue || "—"}
-                        {col.isTotal && col.cap ? <span className="text-slate-400"> /{col.cap}</span> : null}
+                        {col.isTotal && col.cap && !hideTotalCap ? <span className="text-slate-400"> /{col.cap}</span> : null}
                       </td>
                     );
                   })}

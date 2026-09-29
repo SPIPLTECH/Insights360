@@ -45,7 +45,20 @@ export default function DashboardPage() {
     });
   }, [view, search, district, districtColIndex]);
 
-  const recommendations = useMemo(() => (view ? buildOverallRecommendations(view) : []), [view]);
+  // Overall Recommendation also gets each ALC's Index 1-4 counts
+  // (admissions etc.) — read from the same live data, refreshed on every poll.
+  const recommendations = useMemo(
+    () =>
+      view && data
+        ? buildOverallRecommendations(view, {
+            index1: data.views.index1,
+            index2: data.views.index2,
+            index3: data.views.index3,
+            index4: data.views.index4,
+          })
+        : [],
+    [view, data]
+  );
 
   const filteredRecommendations = useMemo(() => {
     if (!view) return [];
@@ -92,9 +105,9 @@ export default function DashboardPage() {
             </p>
           </div>
           {tab === "recommendation" ? (
-            <RecommendationTable rows={filteredRecommendations} title="Recommendation" />
+            <RecommendationTable rows={filteredRecommendations} title="Recommendation" overall />
           ) : (
-       <SheetTable columns={view.columns} rows={filtered} hideEligibilityColumn hideBonusColumn />
+       <SheetTable columns={view.columns} rows={filtered} hideEligibilityColumn hideBonusColumn hideTotalCap />
           )}
           <BottomNav />
         </div>

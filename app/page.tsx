@@ -186,26 +186,22 @@ export default function Home() {
         <section className="preface">
           <span className="section-label">{L({ mr: "प्रस्तावना", en: "Preface" })}</span>
           <h2>{L({ mr: "Recognition Beyond Numbers", en: "Recognition Beyond Numbers" })}</h2>
-          <div className="preface-grid">
-            <p>
+          <p className="preface-text">
               {L({
                 mr: "गेल्या दोन दशकांहून अधिक काळात आपण सर्वांनी मिळून विदर्भ ईस्टमध्ये लाखो Learners पर्यंत Digital Literacy आणि Career-oriented Education पोहोचवले. या यशामध्ये आपल्या प्रत्येकाचे मोलाचे योगदान आहे.",
                 en: "Over more than two decades, together we have brought Digital Literacy and Career-oriented Education to lakhs of learners across Vidarbha East. Every one of you has contributed meaningfully to this achievement.",
               })}
-            </p>
-            <p>
+              {" "}
               {L({
                 mr: "आज मात्र आपल्या सभोवतालचे जग वेगाने बदलत आहे. Artificial Intelligence मुळे शिकण्याची, काम करण्याची आणि Career घडवण्याची पद्धतच बदलली आहे. Learners आता केवळ Computer Course शोधत नाहीत; त्यांना Future Ready व्हायचे आहे.",
                 en: "Today the world around us is changing fast. Artificial Intelligence has changed how people learn, work and build careers. Learners no longer just want a computer course — they want to become future-ready.",
               })}
-            </p>
-            <p>
+              {" "}
               {L({
                 mr: "याच भूमिकेतून Vidarbha East Race to Recognition Framework सादर करत आहोत. ही केवळ Award Scheme नसून, आपल्या Business Growth, Learner Progression, Learning Excellence, Ecosystem Participation आणि Professional Contribution चा व्यापक गौरव करणारी Leadership Framework आहे.",
                 en: "With this in mind, we present the Vidarbha East Race to Recognition Framework — not merely an award scheme, but a leadership framework that recognises Business Growth, Learner Progression, Learning Excellence, Ecosystem Participation and Professional Contribution together.",
               })}
-            </p>
-          </div>
+          </p>
           <p className="emphasis">
             {L({
               mr: "Race to Recognition ही केवळ Competition नाही — ती Excellence, Continuous Learning आणि Contribution मधून Leadership घडवण्याची आणि AI Era साठी समाजाला तयार करण्याची आपल्या सर्वांची सामूहिक Commitment आहे.",
@@ -997,7 +993,7 @@ export default function Home() {
         /* ---------- PREFACE (now uses horizontal space via 2-col text grid) ---------- */
         .preface { max-width: var(--content-max); margin: 0 auto; padding: 18px 24px 6px; }
         .preface h2 { font-size: clamp(20px, 3.4vw, 27px); margin-bottom: 12px; }
-        .preface-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 10px; }
+        .preface-text { font-size: 14px; line-height: 1.8; margin-bottom: 12px; }
         .preface p { font-size: 14px; margin-bottom: 10px; }
         .pref-sign { margin-top: 10px; font-style: italic; color: var(--gold); }
 
@@ -1179,7 +1175,7 @@ export default function Home() {
 
         /* ---------- RESPONSIVE ---------- */
         @media (max-width: 1000px) {
-          .preface-grid, .credits-grid, .fw-rules ol, .norms-list, .one-sentence-list {
+          .credits-grid, .fw-rules ol, .norms-list, .one-sentence-list {
             grid-template-columns: 1fr;
           }
         }

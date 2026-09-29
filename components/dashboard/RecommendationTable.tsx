@@ -45,9 +45,12 @@ function Badge({ value, palette }: { value: string; palette: string[] }) {
 export default function RecommendationTable({
   rows,
   title,
+  overall = false,
 }: {
   rows: RecommendationRow[];
   title: string;
+  /** Overall tab: no message, index lines are static (not expandable), black line between ALCs. */
+  overall?: boolean;
 }) {
   return (
     <div className="overflow-x-auto">
@@ -65,7 +68,7 @@ export default function RecommendationTable({
           {rows.map((row, i) => (
             <tr
               key={row.alcCode + i}
-              className={i % 2 === 0 ? "bg-white" : "bg-orange-50/40"}
+              className={`${i % 2 === 0 ? "bg-white" : "bg-orange-50/40"}${overall ? " border-b border-black" : ""}`}
             >
               <td className="px-4 py-3 whitespace-nowrap font-medium text-slate-700">
                 {row.alcCode}
@@ -77,7 +80,61 @@ export default function RecommendationTable({
               <td className="px-4 py-3 whitespace-nowrap">
                 <Badge value={row.area} palette={AREA_COLORS} />
               </td>
-              <td className="px-4 py-3 text-slate-700">{row.message}</td>
+              <td className="px-4 py-3 text-slate-700 min-w-[340px]">
+                {overall ? (
+                  <div className="space-y-2">
+                    {(row.details ?? []).map((sec) => (
+                      <div
+                        key={sec.title}
+                        className="rounded-lg border border-slate-200 bg-white/80 px-3 py-1.5 text-xs font-semibold text-slate-600"
+                      >
+                        {sec.title}
+                        {sec.status && (
+                          <span
+                            className={`ml-2 font-bold ${
+                              sec.status === "Achieved" ? "text-emerald-600" : "text-rose-600"
+                            }`}
+                          >
+                            {"-->"} {sec.status}
+                          </span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <>
+                    <div className="space-y-1">
+                      {row.message.split("\n").map((line) => (
+                        <div
+                          key={line}
+                          className={line.endsWith("Achieved") ? "text-emerald-600 font-medium" : "text-rose-600 font-medium"}
+                        >
+                          {line}
+                        </div>
+                      ))}
+                    </div>
+                    {(row.details ?? []).map((sec) => (
+                      <details
+                        key={sec.title}
+                        open={sec.defaultOpen}
+                        className="mt-2 rounded-lg border border-slate-200 bg-white/80"
+                      >
+                        <summary className="cursor-pointer select-none px-3 py-1.5 text-xs font-semibold text-slate-600">
+                          {sec.title}
+                        </summary>
+                        <ul className="space-y-1 px-3 pb-2 pt-1">
+                          {sec.lines.map((line) => (
+                            <li key={line.label} className="text-xs leading-relaxed">
+                              <span className="font-semibold text-slate-700">{line.label}:</span>{" "}
+                              <span className="text-slate-600">{line.text}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </details>
+                    ))}
+                  </>
+                )}
+              </td>
             </tr>
           ))}
           {rows.length === 0 && (

@@ -38,6 +38,12 @@ import type { DisplayColumn, DisplayRow } from "@/lib/sheetView";
  * - Removes the "/850" (max points) suffix from every Total Points cell,
  *   because the column heading already says "Total Points(850)".
  *
+ * showRank (opt-in, used ONLY by Home Dashboard):
+ * - Adds a frozen "Rank" column to the LEFT of "ALC Code". The rank
+ *   number comes from `rankMap` (ALC Code -> rank), so it stays fixed
+ *   even when search / district filters are applied. If an ALC is
+ *   missing from rankMap, the row position (1, 2, 3...) is shown.
+ *
  * Column-group separators:
  * - Every top-level group (Index 1, Index 2, Index 3, Index 4 ...) gets a
  *   vertical line on both its left and right edge, so each index's whole
@@ -54,6 +60,9 @@ const GROUP_COLORS = [
   "bg-violet-50 text-violet-700",
 ];
 
+// Width of the optional frozen "Rank" column (sits left of ALC Code).
+const RANK_WIDTH = 64;
+
 // The 4 identity columns (always the leading columns on every view) stay
 // pinned to the left while scrolling right through the index columns, so
 // you can always tell which ALC a row belongs to. Fixed pixel widths are
@@ -66,9 +75,9 @@ const FROZEN_FIELDS: { field: string; width: number }[] = [
   { field: "Area", width: 90 },
 ];
 
-function buildFrozenMap(columns: DisplayColumn[]) {
+function buildFrozenMap(columns: DisplayColumn[], startLeft = 0) {
   const map = new Map<number, { width: number; left: number }>();
-  let left = 0;
+  let left = startLeft;
   for (let i = 0; i < FROZEN_FIELDS.length; i++) {
     const col = columns[i];
     if (!col || col.field.toLowerCase() !== FROZEN_FIELDS[i].field.toLowerCase()) break;
@@ -108,6 +117,8 @@ export default function SheetTable({
   hideEligibilityColumn = false,
   hideBonusColumn = false,
   hideTotalCap = false,
+  showRank = false,
+  rankMap,
 }: {
   columns: DisplayColumn[];
   rows: DisplayRow[];
@@ -119,6 +130,11 @@ export default function SheetTable({
    * Total Points value. Opt-in, used ONLY by Home Dashboard (the header
    * already says "Total Points(850)"). Index 1-4 pages are unaffected. */
   hideTotalCap?: boolean;
+  /** Adds a frozen "Rank" column to the left of "ALC Code". Opt-in,
+   * used ONLY by Home Dashboard. */
+  showRank?: boolean;
+  /** ALC Code -> Rank. Keeps rank fixed while filters are applied. */
+  rankMap?: Map<string, number>;
 }) {
   if (columns.length === 0) {
     return <div className="p-10 text-center text-slate-400 text-sm">Sheet structure could not be read.</div>;
@@ -219,7 +235,17 @@ export default function SheetTable({
     }
   }
 
-  const frozenMap = buildFrozenMap(columnsToRender);
+  // When the Rank column is shown, the other frozen columns shift right
+  // by RANK_WIDTH so they sit right after it.
+  const frozenMap = buildFrozenMap(columnsToRender, showRank ? RANK_WIDTH : 0);
+
+  const rankStyle = (zIndex: number) => ({
+    position: "sticky" as const,
+    left: 0,
+    width: RANK_WIDTH,
+    minWidth: RANK_WIDTH,
+    zIndex,
+  });
 
   return (
     // Bounded, self-scrolling panel (like a frozen-header spreadsheet grid):
@@ -233,6 +259,12 @@ export default function SheetTable({
         <thead className="bg-white" style={{ position: "sticky", top: 0, zIndex: 20 }}>
           {levelRows.map((spans, i) => (
             <tr key={i} className="text-center text-sm md:text-base font-extrabold">
+              {showRank && (
+                <th
+                  style={rankStyle(30)}
+                  className="h-10 px-3 border-b border-slate-200 bg-slate-50 text-slate-600"
+                />
+              )}
               {spans.map((g, j) => {
                 const frozen = g.span === 1 ? frozenMap.get(g.startCol.index) : undefined;
                 return (
@@ -257,6 +289,14 @@ export default function SheetTable({
             </tr>
           ))}
           <tr className="text-center text-sm md:text-base uppercase tracking-wide text-slate-700 font-extrabold">
+            {showRank && (
+              <th
+                style={rankStyle(30)}
+                className="h-10 px-3 whitespace-nowrap bg-slate-50 border-b border-slate-200"
+              >
+                Rank
+              </th>
+            )}
             {columnsToRender.map((col) => {
               const frozen = frozenMap.get(col.index);
               return (
@@ -281,7 +321,10 @@ export default function SheetTable({
         <tbody>
           {rows.length === 0 ? (
             <tr>
-              <td colSpan={columnsToRender.length} className="py-10 text-center text-slate-400 text-sm">
+              <td
+                colSpan={columnsToRender.length + (showRank ? 1 : 0)}
+                className="py-10 text-center text-slate-400 text-sm"
+              >
                 No records match the current filters.
               </td>
             </tr>
@@ -290,6 +333,14 @@ export default function SheetTable({
               const rowBg = rowIdx % 2 === 0 ? "bg-white" : "bg-orange-100";
               return (
                 <tr key={row.alcCode} className={rowBg}>
+                  {showRank && (
+                    <td
+                      style={rankStyle(10)}
+                      className={`py-2 px-3 align-middle text-center font-bold text-slate-700 border-r border-slate-100 ${rowBg}`}
+                    >
+                      {rankMap?.get(row.alcCode) ?? rowIdx + 1}
+                    </td>
+                  )}
                   {columnsToRender.map((col) => {
                     const value = row.cells[col.index] ?? "";
                     const displayValue = displayCellValue(col, value);

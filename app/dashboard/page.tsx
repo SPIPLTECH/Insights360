@@ -17,6 +17,9 @@ import { buildOverallRecommendations } from "@/lib/recommendations";
  * columns, same order, same values (Total Points / Bonus Points / Level
  * are that tab's own formula cells, read as-is). Nothing is calculated
  * here in code.
+ *
+ * Rank = position of the ALC in the sheet's own order (already sorted),
+ * so it stays fixed even when search / district filters are applied.
  */
 export default function DashboardPage() {
   const { data, error, loading, refreshing, refresh } = useDashboardData();
@@ -31,6 +34,13 @@ export default function DashboardPage() {
     if (!view || districtColIndex < 0) return [];
     return Array.from(new Set(view.rows.map((r) => r.cells[districtColIndex]).filter(Boolean))).sort();
   }, [view, districtColIndex]);
+
+  // ALC Code -> Rank (1, 2, 3, ...) based on original sheet order
+  const rankMap = useMemo(() => {
+    const m = new Map<string, number>();
+    view?.rows.forEach((r, i) => m.set(r.alcCode, i + 1));
+    return m;
+  }, [view]);
 
   const filtered = useMemo(() => {
     if (!view) return [];
@@ -107,7 +117,15 @@ export default function DashboardPage() {
           {tab === "recommendation" ? (
             <RecommendationTable rows={filteredRecommendations} title="Recommendation" overall />
           ) : (
-       <SheetTable columns={view.columns} rows={filtered} hideEligibilityColumn hideBonusColumn hideTotalCap />
+            <SheetTable
+              columns={view.columns}
+              rows={filtered}
+              hideEligibilityColumn
+              hideBonusColumn
+              hideTotalCap
+              showRank
+              rankMap={rankMap}
+            />
           )}
           <BottomNav />
         </div>

@@ -42,6 +42,13 @@ function Badge({ value, palette }: { value: string; palette: string[] }) {
   );
 }
 
+/** A line is "good news" — shown in green — when it says a parameter or
+ * an entire index is Achieved / cleared. Everything else (a "Need ..." /
+ * "You need ..." ask) stays red. */
+function isPositiveLine(line: string) {
+  return /achieved$/i.test(line.trim()) || /cleared$/i.test(line.trim());
+}
+
 export default function RecommendationTable({
   rows,
   title,
@@ -92,7 +99,7 @@ export default function RecommendationTable({
                         {sec.status && (
                           <span
                             className={`ml-2 font-bold ${
-                              sec.status === "Achieved" ? "text-emerald-600" : "text-rose-600"
+                              isPositiveLine(sec.status) ? "text-emerald-600" : "text-rose-600"
                             }`}
                           >
                             {"-->"} {sec.status}
@@ -107,7 +114,7 @@ export default function RecommendationTable({
                       {row.message.split("\n").map((line) => (
                         <div
                           key={line}
-                          className={line.endsWith("Achieved") ? "text-emerald-600 font-medium" : "text-rose-600 font-medium"}
+                          className={isPositiveLine(line) ? "text-emerald-600 font-medium" : "text-rose-600 font-medium"}
                         >
                           {line}
                         </div>

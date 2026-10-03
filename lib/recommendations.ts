@@ -16,6 +16,22 @@ import { SheetView, DisplayColumn, DisplayRow } from "./sheetView";
  * are participation/compliance/learning-journey metrics, not a fixed
  * admissions formula, so inventing an "admissions needed" number for
  * them would be a guess, not a fact. Their messages are unchanged.
+ *
+ * Minimum-eligibility addition: every index has its own minimum points
+ * floor to be considered "cleared" for that index (per the Race to
+ * Recognition framework's Contents-at-a-Glance table):
+ *   Index 1 — Business Growth        → min 88  / 350
+ *   Index 2 — Ecosystem Participation → min 50  / 200
+ *   Index 3 — Learning Excellence     → min 30  / 200
+ *   Index 4 — Professional Excellence → min 25  / 100
+ * When an ALC's current score for an index is BELOW that index's
+ * minimum, the recommendation tells the ALC, in one sentence, exactly
+ * how many Points it needs overall to clear the index, and how to get
+ * there: the gap is split across every parameter the ALC still has room
+ * in, IN PROPORTION to how far behind each one is, then converted to
+ * Admissions for Index-1's parameters (MS-CIT/KLiC/CCTP) or left as
+ * Points for every other index. Once the ALC's score meets or exceeds
+ * that index's minimum, the message simply says "Index N cleared".
  */
 
 /** One line of live counts, e.g. label "MSCIT", text "Admissions 180 / 425 (42%) · Points 85 / 200". */
@@ -75,6 +91,17 @@ function findGrandTotalColIndex(columns: DisplayColumn[]): number {
 }
 
 // ---------------------------------------------------------------------
+// Minimum points required to CLEAR each index (Race to Recognition
+// framework, Contents-at-a-Glance table).
+// ---------------------------------------------------------------------
+const INDEX_MIN_POINTS: Record<keyof IndexViews, number> = {
+  index1: 88,
+  index2: 50,
+  index3: 30,
+  index4: 25,
+};
+
+// ---------------------------------------------------------------------
 // Index-1 Admissions targets, straight from the Race to Recognition
 // framework (Business Growth Index · 350 Points). Used ONLY to convert
 // an Index-1 Points gap into an approximate Admissions gap — the Points
@@ -109,10 +136,9 @@ function normalizeArea(area: string): "urban" | "rural" {
 /**
  * If this Index-1 parameter column's label matches MS-CIT/KLiC/CCTP,
  * converts a Points gap into an approximate Admissions gap using that
- * parameter's Urban/Rural target and this column's own Max Points
- * (col.cap). Returns null when the column isn't a recognisable Index-1
- * admissions parameter (e.g. this is actually Index 2/3/4, or the sheet
- * doesn't carry a cap for this column) — callers fall back to the
+ * parameter's Urban/Rural target and this column's own Max Points. Returns
+ * null when the column isn't a recognisable Index-1 admissions parameter
+ * (e.g. this is actually Index 2/3/4) — callers fall back to the
  * points-only message in that case.
  */
 function admissionsGapFor(col: DisplayColumn, area: string, pointsGap: number): number | null {
@@ -202,7 +228,12 @@ function sectionFor(key: keyof IndexViews, view: SheetView, alcCode: string, are
   if (totalIdx >= 0) {
     const cap = view.columns[totalIdx].cap ?? 0;
     const score = num(row.cells[totalIdx]);
-    if (cap > 0) {
+    const minPoints = INDEX_MIN_POINTS[key];
+    if (score < minPoints) {
+      // Below the index's own eligibility floor — flag it distinctly from
+      // "just short of the max", since clearing the minimum comes first.
+      status = `Below Minimum (${score} / ${minPoints} required)`;
+    } else if (cap > 0) {
       status = score >= cap ? "Achieved" : `Need ${Math.round((cap - score) * 100) / 100} to complete`;
     }
   }
@@ -283,18 +314,50 @@ function maxPointsFor(col: DisplayColumn): number | null {
 }
 
 /**
+ * Figures out which index a view belongs to (from its own columns, not an
+ * external label) so we know which minimum-eligibility floor applies:
+ *   - has an "Admissions" column                → Index 1 (min 88)
+ *   - any column has a 2-level groupPath         → Index 3 (min 30)
+ *   - grand-total cap is 100                     → Index 4 (min 25)
+ *   - otherwise (grand-total cap is 200)         → Index 2 (min 50)
+ */
+function minPointsForView(columns: DisplayColumn[], totalCap: number, hasAdmissions: boolean): number {
+  if (hasAdmissions) return INDEX_MIN_POINTS.index1;
+  if (columns.some((c) => c.groupPath.length === 2)) return INDEX_MIN_POINTS.index3;
+  if (totalCap === 100) return INDEX_MIN_POINTS.index4;
+  return INDEX_MIN_POINTS.index2;
+}
+
+/** Same detection as minPointsForView, just returning the display name. */
+function indexLabelForView(columns: DisplayColumn[], totalCap: number, hasAdmissions: boolean): string {
+  if (hasAdmissions) return "Index 1";
+  if (columns.some((c) => c.groupPath.length === 2)) return "Index 3";
+  if (totalCap === 100) return "Index 4";
+  return "Index 2";
+}
+
+/**
  * Index-1 / Index-2 / Index-3 / Index-4 → "Index N Recommendations" tab.
- * Compares every parameter's own "Points" column (whatever parameters
- * that particular index has) against the current Rank-1 ALC's points in
- * that same parameter, and lists only the parameters where the ALC is
- * behind.
+ *
+ * Below-minimum case: if the ALC's current total for this index is BELOW
+ * the index's own minimum-to-clear floor (88 / 50 / 30 / 25), the message
+ * is one sentence: the total Points needed to clear the index, followed
+ * by a proportional, per-parameter breakdown of how to get there —
+ * Admissions for Index-1's MS-CIT/KLiC/CCTP, Points for every other
+ * index's parameters.
+ *
+ * Above-minimum case: the index's minimum is already cleared, so the
+ * message is simply "Index N cleared".
  *
  * Message examples:
- * Index-1 (admissions-backed):
- *   "You need 50 Points (~11 Admissions) in MS-CIT and 30 Points
- *   (~15 Admissions) in KLiC out of 350."
- * Index-2/3/4 (unchanged — not admissions-based):
- *   "You need 50 Points in MoM and 30 Points in AI Masterclass out of 200."
+ * Below minimum, Index-1:
+ *   "You need 27.6 Points to clear Index 1, Put 32 Admissions in MSCIT,
+ *   21 Admissions in KLiC and 14 Admissions in CCTP to clear Index 1."
+ * Below minimum, Index-2:
+ *   "You need 18 Points to clear Index 2, Put 10 Points in MoM and
+ *   8 Points in AI Masterclass to clear Index 2."
+ * Above minimum:
+ *   "Index 1 cleared"
  */
 export function buildIndexRecommendations(view: SheetView): RecommendationRow[] {
   const { columns, rows } = view;
@@ -306,6 +369,9 @@ export function buildIndexRecommendations(view: SheetView): RecommendationRow[] 
 
   // Admissions-based conversion only makes sense on Index-1 (has an "Admissions" column).
   const hasAdmissions = columns.some((c) => /^admissions$/i.test(c.field));
+  const totalCap = columns[totalIdx].cap ?? 0;
+  const minPoints = minPointsForView(columns, totalCap, hasAdmissions);
+  const indexLabel = indexLabelForView(columns, totalCap, hasAdmissions);
 
   // Every parameter-level "Points" column (not the Bonus Points column,
   // not the grand total) — i.e. one entry per scoring parameter the
@@ -326,34 +392,59 @@ export function buildIndexRecommendations(view: SheetView): RecommendationRow[] 
 
   return rows.map((row, i) => {
     const myTotal = totals[i];
-    const topTotal = totals[topIdx];
     const myArea = areaIdx >= 0 ? row.cells[areaIdx] : "";
 
     // Index tabs: sirf message, koi extra details section nahi.
     const details: DetailSection[] = [];
 
-    // Har parameter ki apni line: parameter ke poore (max) points mil gaye to "Achieved",
-    // warna "Need X Points (~Y Admissions)". Koi "out of ..." text nahi.
-    const lines = paramCols.map(({ c, i: colIdx }) => {
+    // Per-parameter gap vs this parameter's own full points (fallback:
+    // Rank-1 ALC's points, if the full max isn't known for that column).
+    const paramGaps = paramCols.map(({ c, i: colIdx }) => {
       const mine = num(row.cells[colIdx]);
-      // Full points of this parameter (fallback: Rank-1 ALC's points if max unknown).
-      const top = maxPointsFor(c) ?? num(topRow.cells[colIdx]);
-      const gap = Math.round((top - mine) * 100) / 100;
-      const label = paramLabel(c);
-      if (gap <= 0) return `${label} --> Achieved`;
-      const admissions = hasAdmissions ? admissionsGapFor(c, myArea, gap) : null;
-      return admissions != null
-        ? `${label} --> Need ${gap} Points (~${admissions} Admissions)`
-        : `${label} --> Need ${gap} Points`;
+      const full = maxPointsFor(c) ?? num(topRow.cells[colIdx]);
+      const gap = Math.round((full - mine) * 100) / 100;
+      return { c, gap };
     });
 
     let message: string;
-    if (lines.length > 0) {
-      message = lines.join("\n");
+
+    if (myTotal < minPoints) {
+      // BELOW MINIMUM ELIGIBILITY: ignore Rank-1 / full-max comparisons —
+      // tell the ALC, in one sentence, exactly how many Points it needs
+      // to clear this index's own floor, and how to get there: the
+      // overall Points gap is split across every parameter the ALC still
+      // has room in, IN PROPORTION to how far behind each one is (so no
+      // single parameter is asked to carry more than its own remaining
+      // gap), then converted to Admissions for Index-1's parameters
+      // (MS-CIT/KLiC/CCTP), or left as Points for every other index.
+      const needed = Math.round((minPoints - myTotal) * 100) / 100;
+      const behind = paramGaps.filter((g) => g.gap > 0);
+      const totalGap = behind.reduce((sum, g) => sum + g.gap, 0);
+
+      const parts = behind.map(({ c, gap }) => {
+        const share = totalGap > 0 ? Math.round(((needed * gap) / totalGap) * 100) / 100 : 0;
+        const label = paramLabel(c);
+        if (hasAdmissions) {
+          const admissions = admissionsGapFor(c, myArea, share) ?? 0;
+          return `${admissions} Admissions in ${label}`;
+        }
+        return `${share} Points in ${label}`;
+      });
+
+      const joined =
+        parts.length === 0
+          ? ""
+          : parts.length === 1
+          ? parts[0]
+          : `${parts.slice(0, -1).join(", ")} and ${parts[parts.length - 1]}`;
+
+      message =
+        parts.length > 0
+          ? `You need ${needed} Points to clear ${indexLabel}, Put ${joined} to clear ${indexLabel}.`
+          : `You need ${needed} Points to clear ${indexLabel}.`;
     } else {
-      const total = columns[totalIdx].cap ?? topTotal;
-      const gap = Math.round((total - myTotal) * 100) / 100;
-      message = gap <= 0 ? "Achieved" : `Need ${gap} Points`;
+      // Already cleared this index's minimum — straight to the point.
+      message = `${indexLabel} cleared`;
     }
 
     return {

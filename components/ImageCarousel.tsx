@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-const IMAGES = ["/img1.png", "/img2.png", "/img3.png"];
+const IMAGES = ["/banner1.png",  "/img4.png", "/25year.png"];
 
 export default function ImageCarousel() {
   const [active, setActive] = useState(0);

@@ -117,6 +117,7 @@ export default function SheetTable({
   hideEligibilityColumn = false,
   hideBonusColumn = false,
   hideTotalCap = false,
+  hidePointsLabel = false,
   showRank = false,
   rankMap,
 }: {
@@ -130,6 +131,9 @@ export default function SheetTable({
    * Total Points value. Opt-in, used ONLY by Home Dashboard (the header
    * already says "Total Points(850)"). Index 1-4 pages are unaffected. */
   hideTotalCap?: boolean;
+  /** Blanks the "Points" field heading (Home Dashboard only: the group
+   * heading above already says which index the points belong to). */
+  hidePointsLabel?: boolean;
   /** Adds a frozen "Rank" column to the left of "ALC Code". Opt-in,
    * used ONLY by Home Dashboard. */
   showRank?: boolean;
@@ -167,6 +171,7 @@ export default function SheetTable({
     return true;
   });
 
+  const compactHeader = hidePointsLabel; // Home Dashboard: labels move up, no separate field row
   const depth = Math.max(0, ...columnsToRender.map((c) => c.groupPath.length));
 
   // Mark the first and last column of every top-level group (e.g. "Index
@@ -254,45 +259,68 @@ export default function SheetTable({
     // page/window scroll (which an "overflow-x-auto"-only wrapper silently
     // hijacks as its scroll reference, causing the header to float in the
     // wrong place).
-    <div className="overflow-auto max-h-[70vh] rounded-b-2xl">
+    <div className="overflow-auto max-h-[70vh] rounded-b-2xl border-t border-slate-100">
       <table className="w-full text-sm border-collapse">
         <thead className="bg-white" style={{ position: "sticky", top: 0, zIndex: 20 }}>
           {levelRows.map((spans, i) => (
-            <tr key={i} className="text-center text-sm md:text-base font-extrabold">
-              {showRank && (
+            <tr key={i} className="text-center text-[13px] md:text-sm font-extrabold">
+              {showRank && compactHeader && i === 0 && (
+                <th
+                  rowSpan={levelRows.length}
+                  style={rankStyle(30)}
+                  className="px-2 whitespace-nowrap bg-slate-100 border-b-2 border-slate-300 text-xs uppercase tracking-wide text-slate-600 font-bold"
+                >
+                  Rank
+                </th>
+              )}
+              {showRank && !compactHeader && (
                 <th
                   style={rankStyle(30)}
-                  className="h-10 px-3 border-b border-slate-200 bg-slate-50 text-slate-600"
+                  className="h-10 px-2 border-b border-slate-200 bg-slate-50 text-slate-600"
                 />
               )}
               {spans.map((g, j) => {
+                if (compactHeader && i > 0 && !g.label) return null; // covered by rowSpan from row 0
+                const lifted = compactHeader && i === 0 && !g.label; // Rank/ALC Code/Name/District/Area/Total/Level
                 const frozen = g.span === 1 ? frozenMap.get(g.startCol.index) : undefined;
                 return (
                   <th
                     key={j}
                     colSpan={g.span}
+                    rowSpan={lifted ? levelRows.length : undefined}
                     style={
                       frozen
                         ? { position: "sticky", left: frozen.left, width: frozen.width, minWidth: frozen.width, zIndex: 30 }
+                        : g.span === 1 && i > 0 && g.label
+                        ? { width: 88, maxWidth: 88 }
                         : undefined
                     }
-                    className={`h-10 px-3 border-b border-slate-200 whitespace-nowrap ${
+                    className={`px-2 py-2 leading-tight ${
+                      lifted
+                        ? "border-b-2 border-slate-300 bg-slate-100 text-xs uppercase tracking-wide text-slate-600 font-bold"
+                        : "border-b border-slate-200"
+                    } ${
+                      lifted && isNameCol(g.startCol) ? "text-left" : ""
+                    } ${
+                      g.span === 1 && i > 0 ? "whitespace-normal break-words" : "whitespace-nowrap"
+                    } ${
                       i === 0 && g.label ? "border-l-2 border-r-2 border-slate-300" : ""
                     } ${
                       g.label ? topLevelColor.get(g.label) ?? "bg-slate-50 text-slate-600" : "bg-slate-50 text-slate-600"
                     }`}
                   >
-                    {g.label}
+                    {lifted ? displayFieldLabel(g.startCol.field) : g.label}
                   </th>
                 );
               })}
             </tr>
           ))}
-          <tr className="text-center text-sm md:text-base uppercase tracking-wide text-slate-700 font-extrabold">
+          {!compactHeader && (
+          <tr className="text-center text-xs uppercase tracking-wide text-slate-600 font-bold">
             {showRank && (
               <th
                 style={rankStyle(30)}
-                className="h-10 px-3 whitespace-nowrap bg-slate-50 border-b border-slate-200"
+                className="h-10 px-2 whitespace-nowrap bg-slate-100 border-b-2 border-slate-300"
               >
                 Rank
               </th>
@@ -308,15 +336,16 @@ export default function SheetTable({
                       ? { position: "sticky", left: frozen.left, width: frozen.width, minWidth: frozen.width, zIndex: 30 }
                       : undefined
                   }
-                  className={`h-10 px-3 whitespace-nowrap bg-slate-50 border-b border-slate-200 ${groupBorderClass(
+                  className={`h-10 px-2.5 whitespace-nowrap bg-slate-100 border-b-2 border-slate-300 ${groupBorderClass(
                     col
                   )} ${isNameCol(col) ? "text-left" : ""}`}
                 >
-                  {displayFieldLabel(col.field)}
+                  {hidePointsLabel && isPointsCol(col) ? "" : displayFieldLabel(col.field)}
                 </th>
               );
             })}
           </tr>
+          )}
         </thead>
         <tbody>
           {rows.length === 0 ? (
@@ -330,13 +359,13 @@ export default function SheetTable({
             </tr>
           ) : (
             rows.map((row, rowIdx) => {
-              const rowBg = rowIdx % 2 === 0 ? "bg-white" : "bg-orange-100";
+              const rowBg = rowIdx % 2 === 0 ? "bg-white" : "bg-orange-50";
               return (
-                <tr key={row.alcCode} className={rowBg}>
+                <tr key={row.alcCode} className={`${rowBg} group border-b border-slate-100 transition-colors`}>
                   {showRank && (
                     <td
                       style={rankStyle(10)}
-                      className={`py-2 px-3 align-middle text-center font-bold text-slate-700 border-r border-slate-100 ${rowBg}`}
+                      className={`py-2 px-2 align-middle text-center border-r border-slate-100 font-bold text-slate-700 group-hover:bg-orange-100 ${rowBg}`}
                     >
                       {rankMap?.get(row.alcCode) ?? rowIdx + 1}
                     </td>
@@ -367,11 +396,11 @@ export default function SheetTable({
                             ? { position: "sticky", left: frozen.left, width: frozen.width, minWidth: frozen.width, zIndex: 10 }
                             : undefined
                         }
-                        className={`py-2 px-3 align-middle ${frozen ? `${rowBg} border-r border-slate-100` : ""} ${groupBorderClass(
+                        className={`py-2 px-2.5 align-middle group-hover:bg-orange-100 ${frozen ? `${rowBg} border-r border-slate-100` : ""} ${groupBorderClass(
                           col
                         )} ${
                           isNameCol(col)
-                            ? "text-left max-w-[210px] whitespace-normal break-words text-slate-700"
+                            ? "text-left max-w-[210px] whitespace-normal break-words font-medium text-slate-800"
                             : "text-center whitespace-nowrap"
                         } ${
                           eligibilityColor

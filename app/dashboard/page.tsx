@@ -123,6 +123,7 @@ export default function DashboardPage() {
               hideEligibilityColumn
               hideBonusColumn
               hideTotalCap
+              hidePointsLabel
               showRank
               rankMap={rankMap}
             />

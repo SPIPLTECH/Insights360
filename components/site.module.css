@@ -1,0 +1,159 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap');
+
+/* ============ SHELL + TOKENS (scoped: only exist inside <SiteShell>) ============ */
+.shell {
+  --saffron: #f5762e;
+  --saffron-soft: #ffe8da;
+  --pink: #ec1e63;
+  --pink-soft: #ffe1ea;
+  --leaf: #1e8e3e;
+  --leaf-soft: #e3f4e8;
+  --gold: #e0a100;
+  --cream: #fff7f0;
+  --cream-2: #ffeedf;
+  --ink: #1a1310;
+  --ink-2: #4a3f38;
+  --muted: #8a7a70;
+  --line: rgba(236, 30, 99, 0.16);
+  --radius: 22px;
+  --shadow: 0 10px 34px rgba(26, 19, 16, 0.07);
+
+  position: relative;
+  background:
+    radial-gradient(circle at 12% 8%, rgba(245, 118, 46, 0.1), transparent 38%),
+    radial-gradient(circle at 92% 22%, rgba(236, 30, 99, 0.08), transparent 36%),
+    #ffffff;
+  color: var(--ink);
+  font-family: 'Work Sans', 'Noto Sans Devanagari', system-ui, sans-serif;
+  overflow-x: clip;
+}
+.shell h1, .shell h2, .shell h3, .shell h4 {
+  font-family: 'Fraunces', 'Noto Sans Devanagari', serif;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 0;
+  color: var(--ink);
+}
+.shell p { margin: 0 0 12px; line-height: 1.75; color: var(--ink-2); font-size: 15px; }
+
+/* ============ SECTION BLOCKS ============ */
+.section { padding: 56px 28px; position: relative; scroll-margin-top: 84px; }
+.inner { max-width: 1120px; margin: 0 auto; position: relative; }
+.center { text-align: center; }
+.tint { background: linear-gradient(180deg, var(--cream), var(--cream-2)); border-block: 1px solid var(--line); }
+.green { background: linear-gradient(180deg, #f3fbf5, #e7f6ec); border-block: 1px solid rgba(30, 142, 62, 0.18); }
+
+.label {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: 'JetBrains Mono', 'Noto Sans Devanagari', monospace;
+  font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--pink); font-weight: 700; margin-bottom: 14px;
+  padding: 6px 14px; border-radius: 100px; background: var(--pink-soft);
+}
+.h2 { font-size: clamp(25px, 3.6vw, 38px); line-height: 1.2; margin-bottom: 14px; }
+.lead { font-size: 16.5px; max-width: 760px; }
+.center .lead { margin-inline: auto; }
+.em { color: var(--pink) !important; font-style: italic; font-weight: 500; }
+.gradText {
+  background: linear-gradient(90deg, var(--saffron), var(--pink));
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
+
+/* ============ CARDS / GRIDS ============ */
+.grid2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+.grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.card {
+  background: #fff; border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 26px 24px; box-shadow: var(--shadow); position: relative; overflow: hidden;
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+.card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(236, 30, 99, 0.14); }
+.card::before {
+  content: ''; position: absolute; inset: 0 0 auto 0; height: 4px;
+  background: linear-gradient(90deg, var(--saffron), var(--pink));
+}
+.kicker {
+  display: block; font-family: 'JetBrains Mono', 'Noto Sans Devanagari', monospace;
+  font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--pink); margin-bottom: 10px; font-weight: 700;
+}
+.cardClose { margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--line); font-style: italic; color: #a34d0c !important; font-weight: 500; }
+.pillars { list-style: none; margin: 0 0 8px; padding: 0; display: grid; gap: 8px; }
+.pillars li { position: relative; padding-left: 26px; font-size: 14.5px; color: var(--ink-2); }
+.pillars li::before {
+  content: ''; position: absolute; left: 0; top: 4px; width: 16px; height: 16px; border-radius: 50% 50% 50% 0;
+  background: linear-gradient(135deg, var(--leaf), #4cc46d); transform: rotate(-45deg);
+}
+.iconBubble {
+  width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center; margin-bottom: 14px;
+  background: linear-gradient(135deg, var(--saffron-soft), var(--pink-soft)); color: var(--pink);
+}
+
+/* ============ TABLES ============ */
+.tableWrap { overflow-x: auto; border-radius: 18px; border: 1px solid var(--line); background: #fff; box-shadow: var(--shadow); }
+.tbl { width: 100%; min-width: 440px; border-collapse: collapse; font-size: 14px; }
+.tbl th, .tbl td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; }
+.tbl th {
+  font-family: 'JetBrains Mono', 'Noto Sans Devanagari', monospace; font-size: 11.5px; letter-spacing: 0.05em;
+  text-transform: uppercase; color: #fff; background: linear-gradient(90deg, var(--saffron), var(--pink)); border-bottom: none;
+}
+.tbl td { color: var(--ink-2); }
+.tbl tbody tr:nth-child(even) td { background: #fffaf6; }
+.tbl tbody tr:hover td { background: var(--cream-2); }
+.tbl tr:last-child td { border-bottom: none; }
+.total td { font-weight: 700; color: var(--ink) !important; background: var(--cream-2) !important; }
+.num { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--pink) !important; white-space: nowrap; }
+.caption { font-size: 15px; font-weight: 700; color: #a34d0c; margin: 0 0 8px; font-family: 'Work Sans', 'Noto Sans Devanagari', sans-serif !important; }
+.note { font-size: 13px; color: var(--muted) !important; margin-top: 10px; }
+
+/* ============ CHIPS / BUTTONS ============ */
+.chips { list-style: none; margin: 14px 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.chips li {
+  font-family: 'JetBrains Mono', 'Noto Sans Devanagari', monospace; font-size: 12px; padding: 7px 14px;
+  border-radius: 100px; border: 1px solid var(--line); background: #fff; color: var(--pink); font-weight: 500;
+}
+.btn {
+  display: inline-flex; align-items: center; gap: 8px; text-decoration: none; font-weight: 700; font-size: 14px;
+  padding: 12px 24px; border-radius: 100px; color: #fff; background: linear-gradient(90deg, var(--saffron), var(--pink));
+  box-shadow: 0 8px 22px rgba(236, 30, 99, 0.3); transition: transform .2s ease, box-shadow .2s ease;
+}
+.btn:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(236, 30, 99, 0.4); }
+
+/* ============ REVEAL ============ */
+.reveal { opacity: 0; transform: translateY(26px); transition: opacity .7s ease, transform .7s ease; }
+.reveal.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+  .card:hover, .btn:hover { transform: none; }
+}
+
+@media (max-width: 900px) {
+  .section { padding: 40px 16px; }
+  .grid2, .grid3 { grid-template-columns: 1fr; }
+}
+
+/* ============ TIMED REVEAL (ScrollFX) ============ */
+.shell :global([data-fx]:not([data-fx="in"])) { opacity: 0; transform: translateY(30px) scale(.97); filter: blur(6px); }
+.shell :global([data-fx="in"]) { animation: fxIn .85s cubic-bezier(.2,.8,.2,1) backwards; animation-delay: var(--fx-d, 0ms); }
+@keyframes fxIn { from { opacity: 0; transform: translateY(30px) scale(.97); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
+/* richer section reveal */
+.reveal { opacity: 0; transform: translateY(34px); filter: blur(5px); transition: opacity .9s cubic-bezier(.2,.8,.2,1), transform .9s cubic-bezier(.2,.8,.2,1), filter .9s ease; }
+.reveal.in { opacity: 1; transform: none; filter: none; }
+
+/* scroll progress bar (under the navbar) */
+.progress { position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 60; pointer-events: none; }
+.progressBar { height: 100%; transform: scaleX(0); transform-origin: left; background: linear-gradient(90deg, #ff9a4d, #ec1e63); border-radius: 0 3px 3px 0; box-shadow: 0 0 10px rgba(236,30,99,.45); }
+
+@media (prefers-reduced-motion: reduce) {
+  .shell :global([data-fx]) { opacity: 1 !important; transform: none !important; filter: none !important; animation: none !important; }
+  .reveal { filter: none; }
+}
+
+/* ============ GLOBAL MOBILE POLISH ============ */
+@media (max-width: 520px) {
+  .section { padding: 34px 14px; }
+  .shell p { font-size: 14.5px; }
+  .lead { font-size: 15.5px; }
+  .card { padding: 20px 18px; }
+  .btn { padding: 12px 20px; }
+  .label { font-size: 11px; padding: 5px 12px; }
+}

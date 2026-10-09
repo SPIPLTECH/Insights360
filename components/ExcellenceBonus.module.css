@@ -1,0 +1,4 @@
+.meter { height: 10px; border-radius: 10px; background: #ffe1ea; overflow: hidden; min-width: 90px; }
+.meter i { display: block; height: 100%; border-radius: 10px; background: linear-gradient(90deg,#f5762e,#ec1e63); }
+.green { color: #14532d !important; background: #c9efd5 !important; }
+.cardH { font-size: 19px; margin-bottom: 8px; color: #ec1e63 !important; }

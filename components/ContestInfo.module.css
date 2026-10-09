@@ -1,0 +1,18 @@
+.dates { display: grid; grid-template-columns: repeat(2,1fr); gap: 16px; margin-top: 22px; }
+.date { background: #fff; border: 1px solid rgba(236,30,99,.18); border-radius: 20px; padding: 20px; box-shadow: 0 10px 26px rgba(26,19,16,.06); }
+.dateHot { background: linear-gradient(135deg,#f5762e,#ec1e63); border-color: transparent; }
+.dateHot span, .dateHot strong { color: #fff !important; }
+.date span { display: block; font-family: 'JetBrains Mono','Noto Sans Devanagari',monospace; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: #8a7a70; margin-bottom: 8px; }
+.date strong { font-family: 'Fraunces','Noto Sans Devanagari',serif; font-size: 20px; color: #ec1e63; }
+.norms { list-style: none; counter-reset: n; margin: 22px 0 0; padding: 0; display: grid; grid-template-columns: repeat(2,1fr); gap: 14px; }
+.norms li { counter-increment: n; position: relative; height: 100%; background: #fff; border: 1px solid rgba(236,30,99,.16); border-radius: 16px; padding: 16px 18px 16px 56px; font-size: 14.5px; line-height: 1.6; color: #4a3f38; box-shadow: 0 6px 18px rgba(26,19,16,.04); }
+.norms li::before { content: counter(n); position: absolute; left: 16px; top: 15px; width: 28px; height: 28px; border-radius: 9px; display: grid; place-items: center; font-family: 'JetBrains Mono',monospace; font-size: 13px; font-weight: 700; color: #fff; background: linear-gradient(135deg,#f5762e,#ec1e63); }
+.greenLabel { color: #14532d !important; background: #c9efd5 !important; }
+.rule { display: flex; gap: 14px; align-items: flex-start; background: #fff; border: 1px solid rgba(30,142,62,.25); border-radius: 20px; padding: 20px 24px; box-shadow: 0 10px 26px rgba(30,142,62,.08); }
+.rule p { margin: 0; }
+.ruleNum { font-family: 'JetBrains Mono','Noto Sans Devanagari',monospace; font-weight: 700; color: #ec1e63; white-space: nowrap; }
+.green, .red { display: inline-flex; align-items: center; gap: 4px; font-weight: 700; }
+.green { color: #1e8e3e; }
+.red { color: #d93025; }
+@media (max-width: 900px) { .dates, .norms { grid-template-columns: 1fr; } .rule { flex-direction: column; } }
+@media (max-width: 520px) { .date { padding: 16px; } .date strong { font-size: 17px; } .norms li { padding: 14px 14px 14px 50px; } }

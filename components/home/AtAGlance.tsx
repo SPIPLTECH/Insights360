@@ -21,7 +21,7 @@ const emptyRows: GlanceRow[] = DISTRICTS.map((district) => ({
   awards: { platinum: 0, gold: 0, silver: 0, bronze: 0 },
 }));
 
-// 👉 FAKT HE EK FUNCTION BADALAYCHA: dashboard cha data ithun yeil
+// change this function -> dashboard data will come
 async function loadGlanceData(): Promise<GlanceRow[]> {
   const res = await fetch("/api/dashboard-summary", { cache: "no-store" });
   if (!res.ok) throw new Error("Failed to load");

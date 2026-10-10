@@ -1,4 +1,4 @@
-const HOME_URL = process.env.NEXT_PUBLIC_HOME_URL;
+const HOME_URL = process.env.NEXT_PUBLIC_HOME_URL || "/";
 
 export default function BackToHomeButton() {
   return (

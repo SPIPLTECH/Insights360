@@ -2,7 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import Submission, { ParameterType, MonthEntry } from "@/models/Submission";
 import { getCurrentUser } from "@/lib/auth";
-import { meetingAttendanceMarks, binaryMarks, monthlyEnrolmentMarks } from "@/lib/marks";
+import { meetingAttendanceMarks, binaryMarks, monthlyEnrolmentSlabMarks, examComplianceMarks, round1 } from "@/lib/marks";
+import { EXAM_EVENTS, CCTV_OBSERVATIONS } from "@/lib/dcuOptions";
+
+const isHttpUrl = (v: unknown) => typeof v === "string" && /^https?:\/\/\S+$/i.test(v.trim());
 
 function requireDcu() {
   const user = getCurrentUser();
@@ -48,27 +51,55 @@ export async function POST(req: NextRequest) {
 
   switch (parameterType) {
     case "meeting_attendance": {
-      const attendancePercent = Number(body.attendancePercent);
-      if (Number.isNaN(attendancePercent)) {
-        return NextResponse.json({ error: "attendancePercent must be a number." }, { status: 400 });
+      const total = Number(body.totalMeetings);
+      const attended = Number(body.attendedMeetings);
+      if (!Number.isInteger(total) || total <= 0) {
+        return NextResponse.json({ error: "Total meetings scheduled must be a whole number greater than 0." }, { status: 400 });
       }
+      if (total > 15) {
+        return NextResponse.json({ error: "Total meetings scheduled cannot be more than 15." }, { status: 400 });
+      }
+      if (!Number.isInteger(attended) || attended < 0) {
+        return NextResponse.json({ error: "Meetings attended must be a whole number (0 or more)." }, { status: 400 });
+      }
+      if (attended > total) {
+        return NextResponse.json({ error: "Meetings attended cannot be more than meetings scheduled." }, { status: 400 });
+      }
+      const attendancePercent = round1((attended / total) * 100);
+      doc.totalMeetings = total;
+      doc.attendedMeetings = attended;
       doc.attendancePercent = attendancePercent;
-      doc.proofDate = body.proofDate ?? "";
       doc.calculatedMarks = meetingAttendanceMarks(attendancePercent);
       break;
     }
     case "exam_compliance": {
-      doc.auditNotes = body.auditNotes ?? "";
-      doc.calculatedMarks = binaryMarks(true); // marks-if-accepted; MRCU decides accept/reject
-      break;
+      // Exam Compliance is now submitted in 2 bulk parts (see /api/dcu/submissions/bulk-exam).
+      return NextResponse.json({ error: "Use the Examination Compliances CCTV page to submit this." }, { status: 400 });
     }
     case "social_media": {
-      if (!body.socialPlatform || !body.socialLink) {
-        return NextResponse.json({ error: "socialPlatform and socialLink are required." }, { status: 400 });
+      if (typeof body.postedOnSocialMedia !== "boolean") {
+        return NextResponse.json({ error: "Please select whether the ALC posted on social media (Yes/No)." }, { status: 400 });
       }
-      doc.socialPlatform = body.socialPlatform;
-      doc.socialLink = body.socialLink;
-      doc.calculatedMarks = binaryMarks(true);
+      doc.postedOnSocialMedia = body.postedOnSocialMedia;
+      if (body.postedOnSocialMedia) {
+        const insta = String(body.instagramLink ?? "").trim();
+        const fb = String(body.facebookLink ?? "").trim();
+        if (!insta || !fb) {
+          return NextResponse.json({ error: "Both Instagram and Facebook links are required." }, { status: 400 });
+        }
+        if (!isHttpUrl(insta) || !isHttpUrl(fb)) {
+          return NextResponse.json({ error: "Links must start with http:// or https://" }, { status: 400 });
+        }
+        doc.instagramLink = insta;
+        doc.facebookLink = fb;
+        doc.socialPlatform = [insta && "Instagram", fb && "Facebook"].filter(Boolean).join(", ");
+        doc.socialLink = [insta, fb].filter(Boolean).join(", ");
+        doc.calculatedMarks = binaryMarks(true);
+      } else {
+        doc.socialPlatform = "None";
+        doc.socialLink = "";
+        doc.calculatedMarks = 0; // not posted -> no marks even if accepted
+      }
       break;
     }
     case "monthly_enrolment": {
@@ -78,7 +109,7 @@ export async function POST(req: NextRequest) {
       }
       doc.months = months;
       const distinctMonths = new Set(months.map((m) => m.month)).size;
-      doc.calculatedMarks = monthlyEnrolmentMarks(distinctMonths);
+      doc.calculatedMarks = monthlyEnrolmentSlabMarks(distinctMonths);
       break;
     }
     default:

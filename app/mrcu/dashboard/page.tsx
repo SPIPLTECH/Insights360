@@ -1,11 +1,11 @@
 import { redirect } from "next/navigation";
-import { getCurrentUser } from "@/lib/auth";
+import { getCurrentUser, canAccessMrcu } from "@/lib/auth";
 import MrcuDashboardClient from "@/components/mrcu/MrcuDashboardClient";
 
 export default function MrcuDashboardPage() {
   const user = getCurrentUser();
-  if (!user || user.role !== "mrcu") {
-    redirect("/mrcu/login");
+  if (!canAccessMrcu(user)) {
+    redirect("/login");
   }
-  return <MrcuDashboardClient displayName={user!.displayName} />;
+  return <MrcuDashboardClient displayName={user.displayName} />;
 }

@@ -145,7 +145,7 @@ export const INDEX4_CONFIG: SheetConfig = {
     { index: 7, field: "Points", groupPath: ["Examination Compliance CCTV"] },
     { index: 8, field: "Yes/No", groupPath: ["Social Media Presence"] },
     { index: 9, field: "Points", groupPath: ["Social Media Presence"] },
-    { index: 10, field: "Yes/No", groupPath: ["Month wise enrolment consistency"] },
+    { index: 10, field: "Consistent Months", groupPath: ["Month wise enrolment consistency"] },
     { index: 11, field: "Points", groupPath: ["Month wise enrolment consistency"] },
     { index: 12, field: "Total Points(100)", groupPath: [] },
     { index: 13, field: "Eligible/Not Eligible", groupPath: [] },

@@ -29,7 +29,7 @@ export default function FourIndex() {
       <section className={`${s.section} ${s.center}`} id="four-index">
         <div className={s.inner}>
           <Reveal>
-            <h2 className={s.h2}>{L({ mr: "चार Index — एक Framework", en: "Four Index — One Framework" })}</h2>
+            <h2 className={s.h2}>{L({ mr: "चार Index", en: "Four Index" })}</h2>
             <p className={s.lead}>{L({ mr: "प्रत्येक Index वर क्लिक करून आपल्या ALC चे Live Points पहा.", en: "Tap an Index to see live points for every ALC." })}</p>
           </Reveal>
 

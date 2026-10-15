@@ -3,14 +3,14 @@
 .card::after { content: ''; position: absolute; inset: auto 0 0 0; height: 5px; background: var(--c); }
 .card:hover { transform: translateY(-6px); box-shadow: 0 18px 40px color-mix(in srgb, var(--c) 28%, transparent); }
 .cardIcon { width: 56px; height: 56px; border-radius: 18px; display: grid; place-items: center; color: #fff; background: var(--c); margin-bottom: 6px; }
-.cardNum { font-family: 'JetBrains Mono',monospace; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--c); font-weight: 700; }
+.cardNum { font-family: 'Work Sans',sans-serif; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--c); font-weight: 700; }
 .card strong { font-family: 'Fraunces','Noto Sans Devanagari',serif; font-size: 18px; color: #1a1310; line-height: 1.25; }
 .cardPts { font-family: 'Fraunces',serif; font-size: 38px; font-weight: 700; color: var(--c); line-height: 1.1; }
 .card small { color: #8a7a70; font-size: 12px; }
 
 .head { display: flex; align-items: center; gap: 18px; margin-bottom: 12px; flex-wrap: wrap; }
 .badge { width: 62px; height: 62px; border-radius: 20px; display: grid; place-items: center; font-family: 'Fraunces',serif; font-size: 26px; font-weight: 700; color: #fff; background: linear-gradient(135deg,#f5762e,#ec1e63); box-shadow: 0 10px 22px rgba(236,30,99,.3); flex-shrink: 0; }
-.pts { font-family: 'JetBrains Mono','Noto Sans Devanagari',monospace; font-size: 12px; font-weight: 700; letter-spacing: .06em; color: #14532d; background: #c9efd5; padding: 4px 12px; border-radius: 100px; }
+.pts { font-family: 'Work Sans','Noto Sans Devanagari',sans-serif; font-size: 12px; font-weight: 700; letter-spacing: .06em; color: #14532d; background: #c9efd5; padding: 4px 12px; border-radius: 100px; }
 .live { margin-left: auto; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; font-size: 13.5px; font-weight: 700; color: #ec1e63; padding: 10px 18px; border-radius: 100px; border: 1.5px solid #ec1e63; transition: all .2s ease; }
 .live:hover { background: #ec1e63; color: #fff; }
 .phil { max-width: 920px; margin-bottom: 22px !important; }

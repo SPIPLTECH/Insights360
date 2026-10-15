@@ -3,6 +3,7 @@ import ExcelJS from "exceljs";
 import { getCurrentUser } from "@/lib/auth";
 import { loadDashboardData } from "@/lib/dataService";
 import type { SheetView, DisplayColumn } from "@/lib/sheetView";
+import { sameDistrict } from "@/lib/districts";
 
 // Must run on the Node.js runtime (ExcelJS needs Node APIs, not the Edge runtime).
 export const runtime = "nodejs";
@@ -42,11 +43,10 @@ function addDistrictSheet(workbook: ExcelJS.Workbook, sheetName: string, view: S
   worksheet.views = [{ state: "frozen", ySplit: 1 }];
 
   const districtColIdx = findDistrictColIndex(view);
-  const targetDistrict = district.trim().toLowerCase();
 
   const rows =
     districtColIdx >= 0
-      ? view.rows.filter((r) => (r.cells[districtColIdx] ?? "").trim().toLowerCase() === targetDistrict)
+      ? view.rows.filter((r) => sameDistrict(r.cells[districtColIdx], district))
       : view.rows;
 
   rows.forEach((r) => {

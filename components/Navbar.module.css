@@ -26,3 +26,12 @@
 .brandText { overflow: hidden; text-overflow: ellipsis; }
 @media (max-width: 380px) { .brandText { display: none; } }
 .burger { min-width: 40px; min-height: 40px; align-items: center; justify-content: center; }
+
+/* Login / Dashboard button — far right of the top bar */
+.login { display: inline-flex; align-items: center; gap: 7px; text-decoration: none; background: #1a1310; color: #fff; font-size: 13.5px; font-weight: 700; padding: 10px 18px; border-radius: 100px; white-space: nowrap; border: none; cursor: pointer; transition: transform .2s ease, background .2s ease; font-family: 'Work Sans','Noto Sans Devanagari',sans-serif; }
+.login:hover { background: #ec1e63; transform: translateY(-1px); }
+.authGroup { display: flex; align-items: center; gap: 8px; }
+.logout { display: inline-grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; border: 1px solid rgba(236,30,99,.3); background: #fff; color: #ec1e63; cursor: pointer; }
+.logout:hover { background: #ffe1ea; }
+.mobileLogout { margin-top: 8px; padding: 12px 0; border: none; background: none; text-align: left; font-size: 15px; color: #ec1e63; cursor: pointer; }
+@media (max-width: 520px) { .login { padding: 8px 12px; font-size: 12.5px; } .login svg { display: none; } }

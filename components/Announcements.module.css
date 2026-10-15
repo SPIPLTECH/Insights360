@@ -9,8 +9,8 @@
 .launch { --c: #f5762e; } .deadline { --c: #ec1e63; } .rule { --c: #7c3aed; } .update { --c: #1e8e3e; }
 .icon { flex-shrink: 0; width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center; color: #fff; background: var(--c); }
 .meta { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
-.meta time { font-family: 'JetBrains Mono','Noto Sans Devanagari',monospace; font-size: 12px; color: #8a7a70; }
-.pin { display: inline-flex; align-items: center; gap: 4px; font-family: 'JetBrains Mono','Noto Sans Devanagari',monospace; font-size: 11px; font-weight: 700; color: #ec1e63; background: #ffe1ea; padding: 3px 10px; border-radius: 100px; }
+.meta time { font-family: 'Work Sans','Noto Sans Devanagari',sans-serif; font-size: 12px; color: #8a7a70; }
+.pin { display: inline-flex; align-items: center; gap: 4px; font-family: 'Work Sans','Noto Sans Devanagari',sans-serif; font-size: 11px; font-weight: 700; color: #ec1e63; background: #ffe1ea; padding: 3px 10px; border-radius: 100px; }
 .item h2 { font-size: 20px; margin-bottom: 6px; line-height: 1.3; }
 .item p { margin: 0; font-size: 14.5px; }
 @media (max-width: 560px) { .item { padding: 18px; gap: 12px; } .icon { width: 40px; height: 40px; } }

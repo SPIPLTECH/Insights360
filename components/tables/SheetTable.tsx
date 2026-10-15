@@ -292,7 +292,9 @@ export default function SheetTable({
                       frozen
                         ? { position: "sticky", left: frozen.left, width: frozen.width, minWidth: frozen.width, zIndex: 30 }
                         : g.span === 1 && i > 0 && g.label
-                        ? { width: 88, maxWidth: 88 }
+                        ? compactHeader
+                          ? { width: 120, minWidth: 120 } // Home Dashboard: wide enough that words never split
+                          : { width: 88, maxWidth: 88 }
                         : undefined
                     }
                     className={`px-2 py-2 leading-tight ${
@@ -302,7 +304,11 @@ export default function SheetTable({
                     } ${
                       lifted && isNameCol(g.startCol) ? "text-left" : ""
                     } ${
-                      g.span === 1 && i > 0 ? "whitespace-normal break-words" : "whitespace-nowrap"
+                      g.span === 1 && i > 0
+                        ? compactHeader
+                          ? "whitespace-normal break-normal"
+                          : "whitespace-normal break-words"
+                        : "whitespace-nowrap"
                     } ${
                       i === 0 && g.label ? "border-l-2 border-r-2 border-slate-300" : ""
                     } ${

@@ -46,7 +46,7 @@ export default function RecognitionFramework() {
               <path d={ROAD} stroke="url(#r2rRoad)" strokeWidth="54" strokeLinecap="round" />
               <path d={ROAD} stroke="#fff" strokeWidth="4" strokeDasharray="15 17" strokeLinecap="round" className={r.dash} />
               <circle cx="150" cy="470" r="26" fill="#1a1310" />
-              <text x="150" y="476" textAnchor="middle" fontFamily="JetBrains Mono, monospace" fontSize="15" fontWeight="700" fill="#fff">S</text>
+              <text x="150" y="476" textAnchor="middle" fontFamily="Work Sans, sans-serif" fontSize="15" fontWeight="700" fill="#fff">S</text>
               <circle cx="1380" cy="370" r="28" fill="#1e8e3e" />
               {STOPS.map((p) => (
                 <g key={p.n}>

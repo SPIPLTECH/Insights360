@@ -5,7 +5,7 @@ import DcuDashboardClient from "@/components/dcu/DcuDashboardClient";
 export default function DcuDashboardPage() {
   const user = getCurrentUser();
   if (!user || user.role !== "dcu" || !user.district) {
-    redirect("/dcu/login");
+    redirect("/login");
   }
   return <DcuDashboardClient district={user!.district!} displayName={user!.displayName} />;
 }

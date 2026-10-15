@@ -86,11 +86,11 @@ export default function FrameworkRoad() {
 
           {/* Start marker */}
           <circle cx="150" cy="470" r="26" fill="#1A1310" />
-          <text x="150" y="476" textAnchor="middle" fontFamily="'JetBrains Mono', monospace" fontSize="15" fontWeight="700" fill="#fff">S</text>
+          <text x="150" y="476" textAnchor="middle" fontFamily="'Work Sans',sans-serif" fontSize="15" fontWeight="700" fill="#fff">S</text>
 
           {/* Goal marker */}
           <circle cx="1380" cy="370" r="26" fill="#1A1310" />
-          <text x="1380" y="376" textAnchor="middle" fontFamily="'JetBrains Mono', monospace" fontSize="15" fontWeight="700" fill="#fff">🚩</text>
+          <text x="1380" y="376" textAnchor="middle" fontFamily="'Work Sans',sans-serif" fontSize="15" fontWeight="700" fill="#fff">🚩</text>
 
           {STOPS.map((s) => (
             <g key={s.n}>
@@ -117,7 +117,7 @@ export default function FrameworkRoad() {
             left: pct(150, VB_W),
             top: pct(512, VB_H),
             transform: "translate(-50%, 0)",
-            fontFamily: "'JetBrains Mono', monospace",
+            fontFamily: "'Work Sans',sans-serif",
             fontSize: 11.5,
             fontWeight: 700,
             letterSpacing: "0.06em",
@@ -133,7 +133,7 @@ export default function FrameworkRoad() {
             left: pct(1380, VB_W),
             top: pct(412, VB_H),
             transform: "translate(-50%, 0)",
-            fontFamily: "'JetBrains Mono', monospace",
+            fontFamily: "'Work Sans',sans-serif",
             fontSize: 11.5,
             fontWeight: 700,
             letterSpacing: "0.06em",
@@ -223,7 +223,7 @@ export default function FrameworkRoad() {
         }
         .road-legend strong {
           color: #ff3d6e;
-          font-family: "JetBrains Mono", monospace;
+          font-family: "Work Sans", sans-serif;
           margin-right: 6px;
         }
 

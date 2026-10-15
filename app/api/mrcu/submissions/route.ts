@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import Submission from "@/models/Submission";
-import { getCurrentUser } from "@/lib/auth";
+import { getCurrentUser, canAccessMrcu } from "@/lib/auth";
 
 export async function GET(req: NextRequest) {
   const user = getCurrentUser();
-  if (!user || user.role !== "mrcu") {
+  if (!canAccessMrcu(user)) {
     return NextResponse.json({ error: "Not authenticated as MRCU." }, { status: 401 });
   }
 

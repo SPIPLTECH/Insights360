@@ -1,7 +1,7 @@
 "use client";
 export default function GlobalStyles() {
   return (
-    <style jsx global>{`@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap');
+    <style jsx global>{`@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap');
 .rr{
 --ink:#1A1310;--paper:#FFFBF7;--peach:#FFF4EC;--peach2:#FFE8DA;--ember:#D81B54;--pink:#FF3D6E;--orange:#FF7A2E;--gold:#B8560E;--dim:#4A3F38;--muted:#7A6B60;--line:rgba(255,61,110,.22);--leaf:#1E8E5A;
 background:var(--paper);color:var(--ink);font-family:'Work Sans','Noto Sans Devanagari',sans-serif;overflow-x:hidden;

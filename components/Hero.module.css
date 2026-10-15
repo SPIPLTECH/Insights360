@@ -70,7 +70,7 @@
 .left svg { box-sizing: border-box; width: 24px; height: 24px; padding: 4px; border-radius: 8px; color: #ec1e63; background: linear-gradient(135deg,#ffe8da,#ffe1ea); vertical-align: -6px; margin-right: 8px; }
 .big { font-family: 'Fraunces',serif; font-size: 20px; font-weight: 700; color: #1a1310; line-height: 1; }
 .accent { color: #ec1e63; }
-.of { font-family: 'JetBrains Mono',monospace; font-size: 11.5px; color: #8a7a70; }
+.of { font-family: 'Work Sans',sans-serif; font-size: 11.5px; color: #8a7a70; }
 .bar { height: 5px; margin: 4px auto 0; max-width: 84px; border-radius: 10px; background: #ffe3cc; overflow: hidden; }
 .bar i { display: block; height: 100%; border-radius: 10px; background: linear-gradient(90deg,#1e8e3e,#4cc46d); transition: width .9s cubic-bezier(.2,.8,.2,1); }
 .awardCell { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; }
@@ -83,7 +83,7 @@
 .errBox { margin-top: 26px; padding: 22px; text-align: center; color: #b42318; font-size: 14px; background: #fff; border: 2px solid #ffc89e; border-radius: 20px; }
 .retry { margin-left: 12px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid #ec1e63; background: #fff; color: #ec1e63; border-radius: 100px; padding: 5px 12px; cursor: pointer; font-weight: 600; }
 
-.legend { display: flex; flex-wrap: wrap; gap: 4px 14px; align-items: center; margin: 12px 6px 0 !important; font-family: 'JetBrains Mono',monospace; font-size: 10.5px !important; color: #8a7a70 !important; line-height: 1.6 !important; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 14px; align-items: center; margin: 12px 6px 0 !important; font-family: 'Work Sans',sans-serif; font-size: 10.5px !important; color: #8a7a70 !important; line-height: 1.6 !important; }
 .live { display: inline-flex; align-items: center; gap: 7px; margin-left: auto; }
 .live i { width: 8px; height: 8px; border-radius: 50%; background: #1e8e3e; display: inline-block; }
 .pulse { animation: pulse 1s ease-in-out infinite; }
@@ -98,9 +98,9 @@ a.stat:hover { transform: translateY(-4px); box-shadow: 0 16px 36px rgba(245,118
 .statMain .statLabel, .statMain small { color: rgba(255,255,255,.88); }
 .statMain .sIcon { background: rgba(255,255,255,.22); color: #fff; }
 .sIcon { width: 34px; height: 34px; border-radius: 11px; display: grid; place-items: center; margin-bottom: 6px; background: linear-gradient(135deg,#ffe8da,#ffe1ea); color: #ec1e63; }
-.statLabel { font-family: 'JetBrains Mono','Noto Sans Devanagari',monospace; font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: #8a7a70; font-weight: 700; }
+.statLabel { font-family: 'Work Sans','Noto Sans Devanagari',sans-serif; font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: #8a7a70; font-weight: 700; }
 .stat b { font-family: 'Fraunces',serif; font-size: 28px; font-weight: 700; line-height: 1.05; }
-.stat b em { font-style: normal; font-family: 'JetBrains Mono',monospace; font-size: 11px; font-weight: 500; opacity: .6; }
+.stat b em { font-style: normal; font-family: 'Work Sans',sans-serif; font-size: 11px; font-weight: 500; opacity: .6; }
 .stat small { font-size: 11px; color: #8a7a70; }
 .stat .bar { max-width: none; margin: 4px 0 2px; }
 
@@ -139,9 +139,9 @@ a.stat:hover { transform: translateY(-4px); box-shadow: 0 16px 36px rgba(245,118
   .mGrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
   .mCell { display: block; text-decoration: none; color: inherit; padding: 8px 10px; border-radius: 12px; background: #fff6ee; border: 1px solid #ffe0c6; }
   .mTotal .mCell { background: rgba(255,255,255,.6); }
-  .mCell span { display: block; font-family: 'JetBrains Mono',monospace; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: #8a7a70; font-weight: 700; }
+  .mCell span { display: block; font-family: 'Work Sans',sans-serif; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: #8a7a70; font-weight: 700; }
   .mCell b { font-family: 'Fraunces',serif; font-size: 21px; color: #1a1310; line-height: 1.15; }
-  .mCell b em { font-style: normal; font-family: 'JetBrains Mono',monospace; font-size: 11px; color: #8a7a70; font-weight: 500; }
+  .mCell b em { font-style: normal; font-family: 'Work Sans',sans-serif; font-size: 11px; color: #8a7a70; font-weight: 500; }
   .mCell .bar { max-width: none; margin-top: 5px; }
   .mCard .levels { margin-top: 10px; gap: 6px; }
 

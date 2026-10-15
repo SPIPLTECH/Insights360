@@ -57,7 +57,7 @@ export default function LevelSteps() {
         }
         .stair-range {
           display: block;
-          font-family: "JetBrains Mono", monospace;
+          font-family: "Work Sans", sans-serif;
           font-size: 11px;
           color: #8a7a70;
           margin-bottom: 8px;

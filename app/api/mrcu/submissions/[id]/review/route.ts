@@ -23,12 +23,12 @@ function computeSheetPayload(submission: any, accepted: boolean) {
     }
 
     case "social_media":
-      // "Yes" only if the DCU said they posted AND MRCU accepted it.
-      sheetValue = accepted && submission.postedOnSocialMedia !== false ? "Yes" : "No";
+      // Regular / Irregular once MRCU accepts; "No" if rejected.
+      sheetValue = accepted ? submission.socialPresence ?? (submission.postedOnSocialMedia !== false ? "Yes" : "No") : "No";
       break;
 
     case "exam_compliance":
-      // "Yes" only if the DCU said CCTV was submitted AND MRCU accepted it. Points = Part 1 + Part 2.
+      // "Yes" if at least one allotted exam had CCTV submitted AND MRCU accepted it. Points = Part 1 + Part 2.
       sheetValue = accepted && submission.cctvSubmitted !== false ? "Yes" : "No";
       break;
 

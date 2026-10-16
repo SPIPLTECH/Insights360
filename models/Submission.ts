@@ -35,11 +35,14 @@ export interface ISubmission {
   examMandatory?: string; // exam_compliance — "Mandatory" | "Not Mandatory"
   cctvSubmitted?: boolean; // exam_compliance
   cctvObservation?: string; // exam_compliance — Bad / Poor / Average / Good / Best (Part 2)
+  examGrid?: { event: string; submitted: boolean }[]; // exam_compliance — one entry per allotted & conducted event
+  examEligibleCount?: number; // exam_compliance — allotted events already conducted when saved
   cctvPart1Marks?: number; // exam_compliance — Part 1 marks (CCTV events), out of 12.5
   observationMarks?: number; // exam_compliance — Part 2 marks (General Observation), out of 12.5
   auditNotes?: string; // exam_compliance (legacy)
 
   postedOnSocialMedia?: boolean; // social_media
+  socialPresence?: "Regular" | "Irregular"; // social_media — Regular = 25, Irregular = 15.5
   instagramLink?: string; // social_media
   facebookLink?: string; // social_media
   socialPlatform?: string; // social_media (joined, kept for MRCU view/export)
@@ -98,11 +101,14 @@ const SubmissionSchema = new Schema<ISubmission>(
     examMandatory: String,
     cctvSubmitted: Boolean,
     cctvObservation: String,
+    examGrid: { type: [{ _id: false, event: String, submitted: Boolean }], default: undefined },
+    examEligibleCount: Number,
     cctvPart1Marks: Number,
     observationMarks: Number,
     auditNotes: String,
 
     postedOnSocialMedia: Boolean,
+    socialPresence: String,
     instagramLink: String,
     facebookLink: String,
     socialPlatform: String,

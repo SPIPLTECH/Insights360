@@ -5,8 +5,9 @@ import { useRouter } from "next/navigation";
 import { PARAM_LABEL, ParamKey } from "@/components/dcu/constants";
 import OverviewView from "./OverviewView";
 import CategoryView from "./CategoryView";
+import AllotmentView from "./AllotmentView";
 
-type View = "overview" | ParamKey;
+type View = "overview" | "allotment" | ParamKey;
 type Notice = { type: "ok" | "warn" | "error"; text: string } | null;
 
 const CATEGORIES = Object.keys(PARAM_LABEL) as ParamKey[];
@@ -137,12 +138,13 @@ export default function MrcuDashboardClient({ displayName }: { displayName: stri
   const navItems: { key: View; label: string; badge: number }[] = [
     { key: "overview", label: "Overview", badge: totalPending },
     ...CATEGORIES.map((c) => ({ key: c as View, label: PARAM_LABEL[c], badge: pendingIn(c) })),
+    { key: "allotment" as View, label: "Examination Allotment", badge: 0 },
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-16">
-      <header className="bg-brand-gradient text-white px-5 py-5 md:px-10 md:py-6">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
+    <div className="min-h-screen bg-slate-50 pb-10">
+      <header className="sticky top-0 z-30 bg-brand-gradient text-white px-3 py-3 md:px-4 md:py-4 shadow-md">
+        <div className="w-full flex items-center justify-between gap-3">
           <div>
             <p className="text-[11px] tracking-widest font-semibold text-white/80 uppercase">MRCU Portal</p>
             <h1 className="text-xl md:text-2xl font-bold mt-0.5">Review Dashboard</h1>
@@ -162,39 +164,31 @@ export default function MrcuDashboardClient({ displayName }: { displayName: stri
             </button>
           </div>
         </div>
-      </header>
-
-      <div className="max-w-7xl mx-auto px-4 md:px-6 mt-6 flex flex-col md:flex-row gap-6">
-        <nav className="md:w-64 md:shrink-0">
-          <div className="card p-2 md:p-3 flex md:flex-col gap-2 overflow-x-auto md:overflow-visible">
+        {/* Tabs sit in the sticky header, below the title */}
+        <div className="w-full mt-3 -mb-1">
+          <nav className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {navItems.map((n) => (
               <button
                 key={n.key}
                 onClick={() => setView(n.key)}
-                className={`whitespace-nowrap md:whitespace-normal text-left text-sm font-semibold px-4 py-2.5 rounded-xl border transition-colors flex items-center justify-between gap-3 ${
-                  view === n.key
-                    ? "bg-brand-gradient text-white border-transparent"
-                    : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
+                className={`flex items-center gap-2 whitespace-nowrap text-sm font-semibold px-4 py-2 rounded-xl transition-colors ${
+                  view === n.key ? "bg-white text-brand-orange shadow-sm" : "bg-white/15 text-white hover:bg-white/25"
                 }`}
               >
                 <span>{n.label}</span>
                 {n.badge > 0 ? (
-                  <span
-                    className={`text-[11px] rounded-full px-2 py-0.5 ${
-                      view === n.key ? "bg-white/25 text-white" : "bg-amber-100 text-amber-700"
-                    }`}
-                  >
-                    {n.badge}
-                  </span>
+                  <span className={`text-[11px] rounded-full px-2 py-0.5 ${view === n.key ? "bg-amber-100 text-amber-700" : "bg-white/25 text-white"}`}>{n.badge}</span>
                 ) : null}
               </button>
             ))}
-          </div>
-        </nav>
+          </nav>
+        </div>
+      </header>
 
-        <main className="flex-1 min-w-0">
+      <div className="w-full mt-3">
+        <main className="min-w-0">
           {notice ? (
-            <div className={`mb-4 rounded-xl border px-4 py-3 text-sm flex items-start justify-between gap-3 ${NOTICE_STYLE[notice.type]}`}>
+            <div className={`mx-3 md:mx-4 mb-3 rounded-xl border px-4 py-3 text-sm flex items-start justify-between gap-3 ${NOTICE_STYLE[notice.type]}`}>
               <span>{notice.text}</span>
               <button onClick={() => setNotice(null)} className="font-semibold opacity-60 hover:opacity-100" aria-label="Dismiss">
                 ✕
@@ -202,8 +196,10 @@ export default function MrcuDashboardClient({ displayName }: { displayName: stri
             </div>
           ) : null}
 
-          <div className="card p-5 md:p-7">
-            {!loaded ? (
+          <div className="card !rounded-none !border-x-0 !shadow-none px-3 py-4 md:px-4">
+            {view === "allotment" ? (
+              <AllotmentView />
+            ) : !loaded ? (
               <p className="text-sm text-slate-400 py-10 text-center">Loading submissions…</p>
             ) : view === "overview" ? (
               <OverviewView

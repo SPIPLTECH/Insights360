@@ -100,3 +100,19 @@ export function cctvEventsMarks(submitted: boolean, eventsCount: number): number
 export function observationMarks(observation?: string | null): number {
   return round3(EXAM_PART_MAX * (OBSERVATION_FRACTION[observation ?? ""] ?? 0));
 }
+
+
+/**
+ * Examination Compliances (out of 25) — Part 1 (CCTV, 12.5) + Part 2 (annual observation, 12.5).
+ * Part 1 = 12.5 x (events with CCTV submitted / events allotted & already conducted).
+ */
+export function cctvGridMarks(submittedCount: number, eligibleCount: number): number {
+  if (eligibleCount <= 0 || submittedCount <= 0) return 0;
+  return round3((EXAM_PART_MAX * Math.min(submittedCount, eligibleCount)) / eligibleCount);
+}
+
+/** Social Media Presence (out of 25): Regular = 25, Irregular = 15.5. */
+export const SOCIAL_PRESENCE_MARKS: Record<string, number> = { Regular: 25, Irregular: 15.5 };
+export function socialPresenceMarks(presence?: string | null): number {
+  return SOCIAL_PRESENCE_MARKS[presence ?? ""] ?? 0;
+}

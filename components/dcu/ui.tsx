@@ -93,10 +93,21 @@ export function FormFooter({ loading, message }: { loading: boolean; message: Fo
   );
 }
 
-export function PageTitle({ title, subtitle }: { title: string; subtitle?: string }) {
+export function PageTitle({
+  title,
+  subtitle,
+  icon,
+}: {
+  title: string;
+  subtitle?: string;
+  icon?: React.ReactNode;
+}) {
   return (
     <div className="mb-5">
-      <h2 className="text-lg font-bold text-slate-800">{title}</h2>
+      <h2 className="flex items-center gap-2 text-xl md:text-2xl font-bold text-slate-800">
+        {icon ? <span className="text-brand-orange">{icon}</span> : null}
+        {title}
+      </h2>
       {subtitle ? <p className="text-sm text-slate-400 mt-0.5">{subtitle}</p> : null}
     </div>
   );

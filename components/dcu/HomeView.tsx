@@ -1,6 +1,15 @@
 "use client";
 
+import { CalendarCheck2, ClipboardList, Megaphone, ShieldCheck } from "lucide-react";
 import { PARAM_LABEL, ParamKey } from "./constants";
+import ExportView from "./ExportView";
+
+const PARAM_ICON: Record<ParamKey, React.ReactNode> = {
+  meeting_attendance: <CalendarCheck2 size={18} />,
+  exam_compliance: <ShieldCheck size={18} />,
+  social_media: <Megaphone size={18} />,
+  monthly_enrolment: <ClipboardList size={18} />,
+};
 
 export default function HomeView({
   district,
@@ -27,7 +36,6 @@ export default function HomeView({
     <div className="space-y-6">
       <div>
         <h2 className="text-lg font-bold text-slate-800">Welcome, {district} DCU</h2>
-        <p className="text-sm text-slate-400 mt-0.5">Submit Index-4 data for your ALCs. MRCU reviews each submission.</p>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
@@ -46,12 +54,20 @@ export default function HomeView({
             <button
               key={k}
               onClick={() => onNavigate(k)}
-              className="text-left rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 hover:border-brand-orange hover:bg-brand-50 transition-colors"
+              className="flex items-center justify-between gap-2 text-left rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 hover:border-brand-orange hover:bg-brand-50 transition-colors"
             >
-              {PARAM_LABEL[k]} <span className="text-brand-orange">→</span>
+              <span className="flex items-center gap-2">
+                <span className="text-brand-orange">{PARAM_ICON[k]}</span>
+                {PARAM_LABEL[k]}
+              </span>
+              <span className="text-brand-orange">→</span>
             </button>
           ))}
         </div>
+      </div>
+
+      <div className="rounded-2xl border border-slate-200 bg-white p-4">
+        <ExportView district={district} />
       </div>
     </div>
   );

@@ -81,7 +81,7 @@ export default function AdminDashboardClient({ displayName }: { displayName: str
   return (
     <div className="min-h-screen bg-slate-50 pb-16">
       <header className="bg-brand-gradient text-white px-5 py-5 md:px-10 md:py-6">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
+        <div className="w-full flex items-center justify-between gap-3">
           <div>
             <p className="text-[11px] tracking-widest font-semibold text-white/80 uppercase">Admin Portal</p>
             <h1 className="text-xl md:text-2xl font-bold mt-0.5">Admin Dashboard</h1>
@@ -98,7 +98,7 @@ export default function AdminDashboardClient({ displayName }: { displayName: str
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 md:px-6 mt-6 space-y-5">
+      <main className="w-full px-4 md:px-6 mt-6 space-y-5">
         {error ? (
           <div className="rounded-xl border border-rose-200 bg-rose-50 text-rose-600 px-4 py-3 text-sm flex justify-between gap-3">
             <span>{error}</span>

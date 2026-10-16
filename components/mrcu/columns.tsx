@@ -52,7 +52,7 @@ export const CATEGORY_COLUMNS: Record<ParamKey, Col[]> = {
       header: "Attendance sheet",
       cell: (s) =>
         s.fileUrls?.[0] ? (
-          <a href={s.fileUrls[0]} target="_blank" rel="noreferrer" className="text-brand-orange underline text-xs font-semibold">
+          <a href={`/api/mrcu/file?url=${encodeURIComponent(s.fileUrls[0])}`} target="_blank" rel="noreferrer" className="text-brand-orange underline text-xs font-semibold">
             View file
           </a>
         ) : (
@@ -62,32 +62,36 @@ export const CATEGORY_COLUMNS: Record<ParamKey, Col[]> = {
   ],
   exam_compliance: [
     {
-      header: "Exam events",
-      cell: (s) => (s.examEvents?.length ? s.examEvents.join(", ") : s.cctvSubmitted === false ? "—" : s.examEvent || dash),
+      header: "Examinations (CCTV)",
+      cell: (s) => {
+        const grid: { event: string; submitted: boolean }[] | null = Array.isArray(s.examGrid)
+          ? s.examGrid
+          : Array.isArray(s.examEvents)
+          ? s.examEvents.map((e: string) => ({ event: e, submitted: true }))
+          : null;
+        if (!grid || grid.length === 0) return dash;
+        return (
+          <div className="flex flex-wrap gap-1.5">
+            {grid.map((g) => (
+              <span
+                key={g.event}
+                className={`inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[11px] font-bold ${
+                  g.submitted ? "bg-emerald-50 text-emerald-700" : "bg-rose-50 text-rose-600"
+                }`}
+              >
+                {g.submitted ? "✓" : "✕"} {g.event}
+              </span>
+            ))}
+          </div>
+        );
+      },
     },
     {
       header: "Part 1 · CCTV (12.5)",
-      cell: (s) =>
-        s.cctvPart1Marks != null ? (
-          <span className="inline-flex flex-col gap-0.5">
-            <span className="inline-flex items-center gap-1.5">
-              <YesNoBadge value={s.cctvSubmitted} />
-              {s.cctvSubmitted && s.examEvents?.length ? <span className="text-xs text-slate-500">{s.examEvents.length} event(s)</span> : null}
-            </span>
-            <strong className="text-xs">{s.cctvPart1Marks}/12.5</strong>
-          </span>
-        ) : s.observationMarks != null ? (
-          <span className="text-xs font-semibold text-amber-600">Not submitted yet</span>
-        ) : s.cctvSubmittedCount != null ? (
-          <strong>
-            {s.cctvSubmittedCount} of {s.examEvents?.length ?? 0}
-          </strong> // old-format submissions
-        ) : (
-          <YesNoBadge value={s.cctvSubmitted} />
-        ),
+      cell: (s) => (s.cctvPart1Marks != null ? <strong className="text-xs">{s.cctvPart1Marks}/12.5</strong> : dash),
     },
     {
-      header: "Part 2 · Observation (12.5)",
+      header: "Annual observation (12.5)",
       cell: (s) =>
         s.cctvObservation ? (
           <span className="inline-flex flex-col gap-0.5">
@@ -96,15 +100,12 @@ export const CATEGORY_COLUMNS: Record<ParamKey, Col[]> = {
             </span>
             {s.observationMarks != null ? <strong className="text-xs">{s.observationMarks}/12.5</strong> : null}
           </span>
-        ) : s.cctvPart1Marks != null ? (
-          <span className="text-xs font-semibold text-amber-600">Not submitted yet</span>
         ) : (
           dash
         ),
     },
   ],
   social_media: [
-    { header: "Posted", cell: (s) => <YesNoBadge value={s.postedOnSocialMedia ?? (s.socialLink ? true : null)} /> },
     {
       header: "Instagram",
       cell: (s) =>
@@ -117,6 +118,21 @@ export const CATEGORY_COLUMNS: Record<ParamKey, Col[]> = {
         ),
     },
     { header: "Facebook", cell: (s) => <LinkCell href={s.facebookLink} /> },
+    {
+      header: "Presence on Social Media?",
+      cell: (s) =>
+        s.socialPresence ? (
+          <span
+            className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
+              s.socialPresence === "Regular" ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"
+            }`}
+          >
+            {s.socialPresence}
+          </span>
+        ) : (
+          <YesNoBadge value={s.postedOnSocialMedia ?? (s.socialLink ? true : null)} />
+        ),
+    },
   ],
   monthly_enrolment: [
     { header: "Months", cell: (s) => <strong>{distinctMonths(s).length}</strong> },

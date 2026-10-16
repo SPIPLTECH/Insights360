@@ -5,7 +5,6 @@ import { getCurrentUser } from "@/lib/auth";
 import { loadAllotments } from "@/lib/allotments";
 import {
   CCTV_OBSERVATIONS,
-  EXAM_EVENTS,
   SOCIAL_PRESENCE_OPTIONS,
   ExamEvent,
   isEventConducted,
@@ -54,7 +53,7 @@ export async function POST(req: NextRequest) {
         totalMeetings: total,
         attendedMeetings: attended,
         attendancePercent,
-        calculatedMarks: meetingAttendanceMarks(attendancePercent),
+        calculatedMarks: meetingAttendanceMarks((attended / total) * 100), // exact ratio, not the rounded % (avoids double rounding)
       };
       if (Array.isArray(body.fileUrls)) fileUrls = body.fileUrls.filter((u: unknown) => typeof u === "string");
       break;
@@ -64,8 +63,8 @@ export async function POST(req: NextRequest) {
       const observation = String(body.observation ?? "");
       if (!(CCTV_OBSERVATIONS as readonly string[]).includes(observation)) return bad("Select the annual observation (Bad … Best).");
 
-      const { map, configured } = await loadAllotments();
-      const allotted = configured ? map[alcCode] ?? [] : [...EXAM_EVENTS];
+      const { map } = await loadAllotments();
+      const allotted = map[alcCode] ?? []; // ALCs with nothing allotted show NA in every event
       const eligible = allotted.filter((e) => isEventConducted(e as ExamEvent));
 
       const sent = new Map<string, boolean>();

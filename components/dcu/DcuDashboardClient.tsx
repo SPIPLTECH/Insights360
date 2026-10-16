@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   CalendarCheck2,
+  CalendarClock,
   ClipboardList,
   Home as HomeIcon,
   LogOut,
@@ -18,12 +19,14 @@ import HomeView from "./HomeView";
 import MySubmissionsView from "./MySubmissionsView";
 import MeetingAttendanceForm from "./forms/MeetingAttendanceForm";
 import ExamComplianceForm from "./forms/ExamComplianceForm";
+import ExamAllotmentForm from "./forms/ExamAllotmentForm";
 import SocialMediaForm from "./forms/SocialMediaForm";
 
-type View = "home" | ParamKey | "submitted";
+type View = "home" | ParamKey | "submitted" | "exam_allotment";
 
 const NAV: { key: View; label: string; icon: React.ReactNode }[] = [
   { key: "home", label: "Home", icon: <HomeIcon size={16} /> },
+  { key: "exam_allotment", label: "Submit Exam Event Allotment", icon: <CalendarClock size={16} /> },
   { key: "meeting_attendance", label: PARAM_LABEL.meeting_attendance, icon: <CalendarCheck2 size={16} /> },
   { key: "exam_compliance", label: PARAM_LABEL.exam_compliance, icon: <ShieldCheck size={16} /> },
   { key: "social_media", label: PARAM_LABEL.social_media, icon: <Megaphone size={16} /> },
@@ -80,8 +83,10 @@ export default function DcuDashboardClient({ district, displayName }: { district
         );
       case "meeting_attendance":
         return <MeetingAttendanceForm alcs={alcs} submissions={submissions} onSubmitted={refreshSubmissions} />;
+      case "exam_allotment":
+        return <ExamAllotmentForm alcs={alcs} />;
       case "exam_compliance":
-        return <ExamComplianceForm alcs={alcs} submissions={submissions} onSubmitted={refreshSubmissions} />;
+        return <ExamComplianceForm alcs={alcs} submissions={submissions} onSubmitted={refreshSubmissions} onGoToAllotment={() => setView("exam_allotment")} />;
       case "social_media":
         return <SocialMediaForm alcs={alcs} submissions={submissions} onSubmitted={refreshSubmissions} />;
       case "monthly_enrolment":
@@ -149,6 +154,7 @@ export default function DcuDashboardClient({ district, displayName }: { district
           ) : null}
           <div className="card !rounded-none !border-x-0 !shadow-none px-3 py-4 md:px-4">
             {isForm ? <PageTitle title={PARAM_LABEL[view as ParamKey]} icon={VIEW_ICON[view]} /> : null}
+            {view === "exam_allotment" ? <PageTitle title="Submit Exam Event Allotment" icon={<CalendarClock size={22} />} /> : null}
             {renderView()}
           </div>
         </main>

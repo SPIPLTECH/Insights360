@@ -7,7 +7,7 @@ import { latestByAlc } from "../constants";
 import { upsertRow } from "../api";
 import AlcGridFrame, { CELL, HEAD } from "../AlcGridFrame";
 import { useFormSubmit } from "../ui";
-import { EditToggle, Glyph, SubmitBar } from "../../shared/kit";
+import { EditToggle, Glyph, NoticeModal, SubmitBar } from "../../shared/kit";
 
 type Grid = Record<string, boolean>;
 
@@ -41,9 +41,8 @@ const LEGEND = (
  *  Page 1: CCTV submitted / not submitted for every allotted examination event (one click per cell), then Submit.
  *  Page 2: General Observations — same ALC data (read-only) + one Bad…Best rating per ALC, then Submit.
  */
-export default function ExamComplianceForm({ alcs, submissions, onSubmitted }: { alcs: Alc[]; submissions: any[]; onSubmitted: () => void }) {
+function ExamComplianceInner({ alcs, submissions, onSubmitted }: { alcs: Alc[]; submissions: any[]; onSubmitted: () => void }) {
   const [allot, setAllot] = useState<Record<string, ExamEvent[]>>({});
-  const [configured, setConfigured] = useState(true);
   const [page, setPage] = useState<1 | 2>(1);
   const [grids, setGrids] = useState<Record<string, Grid>>({});
   const [obs, setObs] = useState<Record<string, string>>({});
@@ -59,12 +58,11 @@ export default function ExamComplianceForm({ alcs, submissions, onSubmitted }: {
       .then((r) => r.json())
       .then((d) => {
         setAllot(d.allotments ?? {});
-        setConfigured(!!d.configured);
       })
       .catch(() => {});
   }, []);
 
-  const allottedOf = (code: string): ExamEvent[] => (configured ? allot[code] ?? [] : [...EXAM_EVENTS]);
+  const allottedOf = (code: string): ExamEvent[] => allot[code] ?? [];
   const eligibleOf = (code: string) => allottedOf(code).filter((e) => isEventConducted(e, now));
 
   /** Current CCTV tick-state for an ALC: draft if touched, else what was saved, else all "not submitted". */
@@ -219,8 +217,7 @@ export default function ExamComplianceForm({ alcs, submissions, onSubmitted }: {
         top={
           <div className="space-y-2">
             {LEGEND}
-            {!configured ? <p className="text-xs rounded-xl bg-amber-50 text-amber-700 px-3 py-2">Examination allotment is not uploaded yet — all examinations are shown as allotted.</p> : null}
-          </div>
+                      </div>
         }
         head={
           <tr>
@@ -244,5 +241,34 @@ export default function ExamComplianceForm({ alcs, submissions, onSubmitted }: {
       </AlcGridFrame>
       <SubmitBar loading={false} message={message} onSubmit={goToObservations} label="Submit & Continue →" />
     </div>
+  );
+}
+
+/**
+ * Examination Compliances stays disabled until the DCU has submitted the district's Examination Allotment
+ * (the "Submit Exam Event Allotment" tab). Until then a pop-up sends the DCU there.
+ */
+export default function ExamComplianceForm(props: { alcs: Alc[]; submissions: any[]; onSubmitted: () => void; onGoToAllotment: () => void }) {
+  const [allotSubmitted, setAllotSubmitted] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    fetch("/api/dcu/allotments")
+      .then((r) => r.json())
+      .then((d) => setAllotSubmitted(!!d.submitted))
+      .catch(() => setAllotSubmitted(false));
+  }, []);
+
+  const locked = allotSubmitted !== true;
+  return (
+    <>
+      <div className={locked ? "pointer-events-none select-none opacity-40" : ""} aria-disabled={locked}>
+        <ExamComplianceInner alcs={props.alcs} submissions={props.submissions} onSubmitted={props.onSubmitted} />
+      </div>
+      <NoticeModal
+        title="Examination Allotment pending"
+        message={allotSubmitted === false ? "First Submit your districts alc's Examination Allotment status." : null}
+        onClose={props.onGoToAllotment}
+      />
+    </>
   );
 }

@@ -9,9 +9,9 @@ import { useLang } from "./LanguageProvider";
 import Garden from "./Garden";
 import h from "./Hero.module.css";
 
-/** Official ALC count for Vidarbha East (595) — every "total" on this page is measured against it. */
-const TOTAL_ALC = 595;
-/** Optional: fill per-district ALC counts here (should add up to 595). Empty = counted from live data. */
+/** Official ALC count for Vidarbha East (588) — every "total" on this page is measured against it. */
+const TOTAL_ALC = 588;
+/** Optional: fill per-district ALC counts here (should add up to 588). Empty = counted from live data. */
 const DISTRICT_ALC: Partial<Record<string, number>> = {};
 
 const IMAGES = ["/banner1.png", "/img4.png", "/25year.png"]; // each image: 1413 × 255

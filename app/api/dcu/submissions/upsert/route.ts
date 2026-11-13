@@ -60,12 +60,19 @@ export async function POST(req: NextRequest) {
     }
 
     case "exam_compliance": {
-      const observation = String(body.observation ?? "");
-      if (!(CCTV_OBSERVATIONS as readonly string[]).includes(observation)) return bad("Select the annual observation (Bad … Best).");
+      // Order: exam events allotted -> CCTV status saved -> General Observation.
+      const rawObs = body.observation == null ? "" : String(body.observation);
+      if (rawObs && !(CCTV_OBSERVATIONS as readonly string[]).includes(rawObs)) return bad("Select the annual observation (Bad … Best).");
 
       const { map } = await loadAllotments();
       const allotted = map[alcCode] ?? []; // ALCs with nothing allotted show NA in every event
       const eligible = allotted.filter((e) => isEventConducted(e as ExamEvent));
+
+      const prev: any = await Submission.findOne({ district: user.district, alcCode, parameterType }).sort({ createdAt: -1 }).lean();
+      if (rawObs) {
+        if (allotted.length === 0) return bad("Exam events are not allotted to this ALC. Submit the Exam Event Allotment first.");
+        if (eligible.length === 0) return bad("None of this ALC's allotted exam events has been conducted yet.");
+      }
 
       const sent = new Map<string, boolean>();
       for (const g of Array.isArray(body.grid) ? body.grid : []) {
@@ -74,8 +81,11 @@ export async function POST(req: NextRequest) {
       }
       const examGrid = eligible.map((event) => ({ event, submitted: sent.get(event) === true }));
       const submittedEvents = examGrid.filter((g) => g.submitted).map((g) => g.event);
+      if (rawObs && submittedEvents.length === 0) return bad("First submit the exam events and the CCTV of this ALC, then select the General Observation.");
+      // No eligible event / no CCTV submitted -> no observation, no marks. Observation not sent (CCTV-only save) -> keep the saved one.
+      const observation = eligible.length === 0 || submittedEvents.length === 0 ? "" : rawObs || (prev?.cctvObservation ?? "");
       const part1 = cctvGridMarks(submittedEvents.length, eligible.length);
-      const part2 = observationMarks(observation);
+      const part2 = observation ? observationMarks(observation) : 0;
       fields = {
         examGrid,
         examEligibleCount: eligible.length,

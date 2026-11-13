@@ -43,6 +43,7 @@ const LEGEND = (
  */
 function ExamComplianceInner({ alcs, submissions, onSubmitted }: { alcs: Alc[]; submissions: any[]; onSubmitted: () => void }) {
   const [allot, setAllot] = useState<Record<string, ExamEvent[]>>({});
+  const [allotLoaded, setAllotLoaded] = useState(false);
   const [page, setPage] = useState<1 | 2>(1);
   const [grids, setGrids] = useState<Record<string, Grid>>({});
   const [obs, setObs] = useState<Record<string, string>>({});
@@ -58,6 +59,7 @@ function ExamComplianceInner({ alcs, submissions, onSubmitted }: { alcs: Alc[]; 
       .then((r) => r.json())
       .then((d) => {
         setAllot(d.allotments ?? {});
+        setAllotLoaded(true);
       })
       .catch(() => {});
   }, []);
@@ -73,10 +75,19 @@ function ExamComplianceInner({ alcs, submissions, onSubmitted }: { alcs: Alc[]; 
     for (const e of eligibleOf(a.alcCode)) g[e] = saved[e] === true;
     return g;
   }
+  /** Why the General Observation is locked for an ALC (null = can be rated). Order: events -> CCTV -> observation. */
+  function obsBlock(a: Alc): string | null {
+    if (!allotLoaded) return "Loading…";
+    if (allottedOf(a.alcCode).length === 0) return "Exam events not allotted";
+    if (eligibleOf(a.alcCode).length === 0) return "Events not yet conducted";
+    const saved = latest.get(a.alcCode);
+    if (!(Array.isArray(saved?.examGrid) && saved.examGrid.some((g: any) => g?.submitted))) return "Submit exam CCTV first";
+    return null;
+  }
   const obsOf = (a: Alc) => obs[a.alcCode] ?? latest.get(a.alcCode)?.cctvObservation ?? "";
 
   /** Saved ALCs are locked (pencil to edit); ALCs without saved data are always open. */
-  const isOpen = (a: Alc) => !latest.get(a.alcCode) || editing[a.alcCode] === true;
+  const isOpen = (a: Alc) => !latest.get(a.alcCode) || editing[a.alcCode] === true || (obsBlock(a) === null && !latest.get(a.alcCode)?.cctvObservation);
   const pencil = (a: Alc) =>
     latest.get(a.alcCode) ? (
       <EditToggle
@@ -119,18 +130,32 @@ function ExamComplianceInner({ alcs, submissions, onSubmitted }: { alcs: Alc[]; 
 
   const eventHeads = EXAM_EVENTS.map((e) => <th key={e} className={`${HEAD} text-center`}>{e}</th>);
 
-  function goToObservations() {
+  /** Page 1 -> saves the CCTV status of every open ALC that has conducted events, then opens page 2. */
+  async function goToObservations() {
     setMessage(null);
     setDone(false);
-    setPage(2);
+    const ok = await run(async () => {
+      for (const a of alcs.filter((x) => isOpen(x) && eligibleOf(x.alcCode).length > 0)) {
+        const g = gridOf(a);
+        await upsertRow({
+          parameterType: "exam_compliance",
+          alcCode: a.alcCode,
+          alcName: a.alcName,
+          grid: eligibleOf(a.alcCode).map((event) => ({ event, submitted: g[event] === true })),
+        });
+      }
+      onSubmitted();
+    });
+    if (ok) { setMessage(null); setPage(2); }
   }
 
   async function submitAll(only?: Alc) {
     const rowRun = only ? async (t: () => Promise<void>, ok?: string) => { setSavingRow(only.alcCode); const r = await run(t, ok); setSavingRow(null); return r; } : run;
     await rowRun(async () => {
-      const todo = only ? [only] : alcs.filter((a) => isOpen(a));
-      if (todo.length === 0) throw new Error("Click the pencil on an ALC to edit it, then submit.");
-      const missing = todo.filter((a) => !obsOf(a));
+      const todo = (only ? [only] : alcs.filter((a) => isOpen(a))).filter((a) => eligibleOf(a.alcCode).length > 0);
+      if (todo.length === 0) throw new Error(only ? "Exam events are not allotted / conducted for this ALC." : "Nothing to submit. Click the pencil on an ALC to edit it, then submit.");
+      const needObs = page === 2;
+      const missing = needObs ? todo.filter((a) => !obsBlock(a) && !obsOf(a)) : [];
       if (missing.length) {
         throw new Error(`Select the observation for ${missing.length} ALC${missing.length > 1 ? "s" : ""}: ${missing.slice(0, 3).map((a) => a.alcName).join(", ")}${missing.length > 3 ? "…" : ""}`);
       }
@@ -141,7 +166,7 @@ function ExamComplianceInner({ alcs, submissions, onSubmitted }: { alcs: Alc[]; 
           alcCode: a.alcCode,
           alcName: a.alcName,
           grid: eligibleOf(a.alcCode).map((event) => ({ event, submitted: g[event] === true })),
-          observation: obsOf(a),
+          observation: page === 2 && !obsBlock(a) ? obsOf(a) : undefined,
         });
       }
       const clear = <T,>(p: Record<string, T>): Record<string, T> => { if (!only) return {}; const n = { ...p }; delete n[only.alcCode]; return n; };
@@ -183,7 +208,9 @@ function ExamComplianceInner({ alcs, submissions, onSubmitted }: { alcs: Alc[]; 
                 <td className={`${CELL} px-3 text-slate-700`}>{a.alcName}</td>
                 {EXAM_EVENTS.map((ev) => cell(a, ev, false))}
                 <td className={CELL}>
-                  {isOpen(a) ? (
+                  {obsBlock(a) ? (
+                    <span className="inline-block rounded-md bg-slate-100 px-2 py-1 text-xs font-medium text-slate-400" title="General Observation is locked until exam events and CCTV status are submitted">{obsBlock(a)}</span>
+                  ) : isOpen(a) ? (
                   <select
                     value={obsOf(a)}
                     onChange={(e) => { setMessage(null); setObs((p) => ({ ...p, [a.alcCode]: e.target.value })); }}
@@ -239,7 +266,7 @@ function ExamComplianceInner({ alcs, submissions, onSubmitted }: { alcs: Alc[]; 
           ))
         }
       </AlcGridFrame>
-      <SubmitBar loading={false} message={message} onSubmit={goToObservations} label="Submit & Continue →" />
+      <SubmitBar loading={loading} message={message} onSubmit={goToObservations} label="Submit & Continue →" />
     </div>
   );
 }

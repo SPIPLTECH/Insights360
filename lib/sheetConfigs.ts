@@ -46,15 +46,24 @@ export const INDEX1_CONFIG: SheetConfig = {
     { index: 4, field: "Admissions", groupPath: ["MSCIT"] },
     { index: 5, field: "Points", groupPath: ["MSCIT"] },
     { index: 6, field: "Bonus Points", groupPath: ["MSCIT"] },
-    { index: 7, field: "Admissions", groupPath: ["KLiC"] },
-    { index: 8, field: "Points", groupPath: ["KLiC"] },
-    { index: 9, field: "Bonus Points", groupPath: ["KLiC"] },
-    { index: 10, field: "Admissions", groupPath: ["CCTP"] },
-    { index: 11, field: "Points", groupPath: ["CCTP"] },
-    { index: 12, field: "Bonus Points", groupPath: ["CCTP"] },
-    { index: 13, field: "Total Points(350)", groupPath: [] },
-    { index: 14, field: "Bonus Points", groupPath: [] },
-    { index: 15, field: "Eligible/Not Eligible", groupPath: [] },
+    // KLiC admissions are now split by plan (H..K) and summed in "KLiC Total" (L).
+    // The Total column keeps the field name "Admissions" on purpose: the
+    // recommendations logic (lib/recommendations.ts) looks for that exact
+    // label to compare KLiC admissions against the Urban/Rural target.
+    { index: 7, field: "KLiC 30", groupPath: ["KLiC"] },
+    { index: 8, field: "KLiC 60", groupPath: ["KLiC"] },
+    { index: 9, field: "KLiC 90", groupPath: ["KLiC"] },
+    { index: 10, field: "KLiC 120", groupPath: ["KLiC"] },
+    { index: 11, field: "Admissions", groupPath: ["KLiC"] }, // sheet: "KLiC Total"
+    { index: 12, field: "Points", groupPath: ["KLiC"] },
+    { index: 13, field: "Bonus Points", groupPath: ["KLiC"] },
+    // CCTP: sheet column O = "All Year CCTP" (admissions)
+    { index: 14, field: "Admissions", groupPath: ["CCTP"] },
+    { index: 15, field: "Points", groupPath: ["CCTP"] },
+    { index: 16, field: "Bonus Points", groupPath: ["CCTP"] },
+    { index: 17, field: "Total Points(350)", groupPath: [] },
+    { index: 18, field: "Bonus Points", groupPath: [] },
+    { index: 19, field: "Eligible/Not Eligible", groupPath: [] },
   ],
 };
 

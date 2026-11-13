@@ -98,7 +98,7 @@ export async function getHomeRaw(): Promise<RawGrid> {
 }
 
 export async function getIndex1Raw(): Promise<RawGrid> {
-  return fetchRange(SHEET_1_ID(), "Index-1!A1:R2000");
+  return fetchRange(SHEET_1_ID(), "Index-1!A1:Z2000");
 }
 
 export async function getIndex2Raw(): Promise<RawGrid> {

@@ -28,6 +28,12 @@ function computeSheetPayload(submission: any, accepted: boolean) {
       break;
 
     case "exam_compliance":
+      // No allotted + conducted exam event -> "NA", 0 points (never marks for a General Observation alone).
+      if ((submission.examEligibleCount ?? 0) === 0 && Array.isArray(submission.examGrid)) {
+        sheetValue = "NA";
+        finalMarks = 0;
+        break;
+      }
       // "Yes" if at least one allotted exam had CCTV submitted AND MRCU accepted it. Points = Part 1 + Part 2.
       sheetValue = accepted && submission.cctvSubmitted !== false ? "Yes" : "No";
       break;

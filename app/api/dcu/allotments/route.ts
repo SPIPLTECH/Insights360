@@ -3,7 +3,8 @@ import { connectDB } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
 import { loadAllotments } from "@/lib/allotments";
 import { getDistrictAlcs } from "@/lib/districtAlcs";
-import { normalizeEvent } from "@/lib/dcuOptions";
+import { normalizeEvent, isEventConducted, ExamEvent } from "@/lib/dcuOptions";
+import { resetExamForAlc } from "@/lib/examReset";
 import ExamAllotment from "@/models/ExamAllotment";
 
 function dcuOnly() {
@@ -55,5 +56,11 @@ export async function PUT(req: NextRequest) {
       updateOne: { filter: { alcCode }, update: { $set: { alcCode, events } }, upsert: true },
     }))
   );
+  // An ALC left with no conducted exam event cannot keep a General Observation: clear it (and the sheet cell).
+  for (const [alcCode, events] of ops) {
+    if (!events.some((e) => isEventConducted(e as ExamEvent))) {
+      try { await resetExamForAlc(alcCode); } catch (e) { console.error("exam reset failed", alcCode, e); }
+    }
+  }
   return NextResponse.json({ count: ops.size });
 }

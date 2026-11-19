@@ -308,7 +308,7 @@ const PARAM_MAX_POINTS: Record<string, number> = {
 function maxPointsFor(col: DisplayColumn): number | null {
   const path = col.groupPath;
   // Index 3: [MSCIT | KLiC, <parameter>] — every parameter is out of 20.
-  if (path.length === 2 && /^(mscit|klic)$/i.test(path[0])) return 20;
+  if (path.length === 2 && /^(ms-?cit|klic)$/i.test(path[0])) return 20;
   const key = (path[path.length - 1] ?? "").toLowerCase().replace(/[()]/g, "").replace(/\s+/g, " ").trim();
   return PARAM_MAX_POINTS[key] ?? null;
 }

@@ -106,36 +106,39 @@ export const INDEX3_CONFIG: SheetConfig = {
   coreCols: CORE,
   columns: [
     ...CORE_COLUMNS,
-    // ---- MSCIT section ----
-    { index: 4, field: "Target Achieved", groupPath: ["MSCIT", "Timely Learning Start"] },
-    { index: 5, field: "Points", groupPath: ["MSCIT", "Timely Learning Start"] },
-    { index: 6, field: "Consistency?", groupPath: ["MSCIT", "Learning Consistency"] },
-    { index: 7, field: "Points", groupPath: ["MSCIT", "Learning Consistency"] },
-    { index: 8, field: "Target Achieved", groupPath: ["MSCIT", "Course Completion"] },
-    { index: 9, field: "Points", groupPath: ["MSCIT", "Course Completion"] },
-    { index: 10, field: "Yes/No", groupPath: ["MSCIT", "Biometric Attendance"] },
-    { index: 11, field: "Points", groupPath: ["MSCIT", "Biometric Attendance"] },
-    { index: 12, field: "Installed", groupPath: ["MSCIT", "Learner App"] },
-    { index: 13, field: "Points", groupPath: ["MSCIT", "Learner App"] },
-    { index: 14, field: "Success%", groupPath: ["MSCIT", "Certification Success"] },
-    { index: 15, field: "Points", groupPath: ["MSCIT", "Certification Success"] },
-    { index: 16, field: "Total Points(120)", groupPath: ["MSCIT"] },
-    { index: 17, field: "MSCIT Credit Points", groupPath: ["MSCIT"] },
+    // ---- MS-CIT section (sheet columns E..R) ----
+    { index: 4, field: "Target Achieved", groupPath: ["MS-CIT", "Timely Learning Start"] },
+    { index: 5, field: "Points", groupPath: ["MS-CIT", "Timely Learning Start"] },
+    { index: 6, field: "Status", groupPath: ["MS-CIT", "Learning Consistency"] },
+    { index: 7, field: "Points", groupPath: ["MS-CIT", "Learning Consistency"] },
+    { index: 8, field: "Completion %", groupPath: ["MS-CIT", "Course Completion"] },
+    { index: 9, field: "Points", groupPath: ["MS-CIT", "Course Completion"] },
+    { index: 10, field: "Yes/No", groupPath: ["MS-CIT", "Biometric Attendance"] },
+    { index: 11, field: "Points", groupPath: ["MS-CIT", "Biometric Attendance"] },
+    { index: 12, field: "Installed", groupPath: ["MS-CIT", "Learner App"] },
+    { index: 13, field: "Points", groupPath: ["MS-CIT", "Learner App"] },
+    { index: 14, field: "Success%", groupPath: ["MS-CIT", "Certification Success"] },
+    { index: 15, field: "Points", groupPath: ["MS-CIT", "Certification Success"] },
+    { index: 16, field: "Total Points(120)", groupPath: ["MS-CIT"] },
+    { index: 17, field: "Credit Points", groupPath: ["MS-CIT"] },
+    // sheet column S (18) is a blank spacer — skipped
 
-    // ---- KLiC section ----
+    // ---- KLiC section (sheet columns T..AC) ----
     { index: 19, field: "Target Achieved", groupPath: ["KLiC", "Timely Learning Start"] },
     { index: 20, field: "Points", groupPath: ["KLiC", "Timely Learning Start"] },
-    { index: 21, field: "Consistency?", groupPath: ["KLiC", "Learning Consistency"] },
+    { index: 21, field: "Status", groupPath: ["KLiC", "Learning Consistency"] },
     { index: 22, field: "Points", groupPath: ["KLiC", "Learning Consistency"] },
-    { index: 23, field: "Target Achieved", groupPath: ["KLiC", "Course Completion"] },
+    { index: 23, field: "Completion %", groupPath: ["KLiC", "Course Completion"] },
     { index: 24, field: "Points", groupPath: ["KLiC", "Course Completion"] },
     { index: 25, field: "Yes/No", groupPath: ["KLiC", "Certification Success"] },
     { index: 26, field: "Points", groupPath: ["KLiC", "Certification Success"] },
     { index: 27, field: "Total Points(80)", groupPath: ["KLiC"] },
-    { index: 28, field: "KLiC Credits Points", groupPath: ["KLiC"] },
+    { index: 28, field: "Credit Points", groupPath: ["KLiC"] },
+    // sheet column AD (29) is a blank spacer — skipped
 
+    // ---- Combined (MS-CIT + KLiC), sheet columns AE..AG ----
     { index: 30, field: "Total Points(200)", groupPath: [] },
-    { index: 31, field: "Total Credit Points", groupPath: [] },
+    { index: 31, field: "Credit Points", groupPath: [] },
     { index: 32, field: "Eligible/Not Eligible", groupPath: [] },
   ],
 };

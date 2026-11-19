@@ -171,6 +171,14 @@ export default function SheetTable({
     return true;
   });
 
+  // IMPORTANT: DisplayRow.cells is ordered by column POSITION in `columns`,
+  // not by the sheet's column letter index. Some tabs (Index-3) skip blank
+  // spacer columns in the sheet, so col.index != position there. Always look
+  // cells up through this map, otherwise every column after a gap shifts.
+  const cellPos = new Map<number, number>();
+  columns.forEach((c, i) => cellPos.set(c.index, i));
+  const cellAt = (row: DisplayRow, col: DisplayColumn) => row.cells[cellPos.get(col.index) ?? -1] ?? "";
+
   const compactHeader = hidePointsLabel; // Home Dashboard: labels move up, no separate field row
   const depth = Math.max(0, ...columnsToRender.map((c) => c.groupPath.length));
 
@@ -377,7 +385,7 @@ export default function SheetTable({
                     </td>
                   )}
                   {columnsToRender.map((col) => {
-                    const value = row.cells[col.index] ?? "";
+                    const value = cellAt(row, col);
                     const displayValue = displayCellValue(col, value);
                     const frozen = frozenMap.get(col.index);
 
@@ -387,7 +395,7 @@ export default function SheetTable({
                     if (hideEligibilityColumn && isPointsCol(col)) {
                       const eligCol = pointsToEligibility.get(col.index);
                       if (eligCol) {
-                        const eligRaw = row.cells[eligCol.index] ?? "";
+                        const eligRaw = cellAt(row, eligCol);
                         const eligValue = displayCellValue(eligCol, eligRaw);
                         if (eligValue === "Yes") eligibilityColor = "text-emerald-600 font-bold";
                         else if (eligValue === "No") eligibilityColor = "text-rose-500 font-bold";

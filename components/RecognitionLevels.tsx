@@ -1,18 +1,33 @@
 "use client";
 
-import { Crown, Medal } from "lucide-react";
-import { awardLevels } from "@/lib/content";
+import { Crown, Medal, Star } from "lucide-react";
 import type { Bi } from "@/lib/content";
 import { useLang } from "./LanguageProvider";
 import Reveal from "./Reveal";
 import s from "./site.module.css";
 import l from "./RecognitionLevels.module.css";
 
-const STEPS: { tag: string; range: string; copy: Bi; h: number; color: string; dark: string }[] = [
-  { tag: "BRONZE", range: "50% – 59.9%", copy: { mr: "उत्कृष्टतेकडे अर्थपूर्ण पावले.", en: "Taking meaningful steps towards excellence." }, h: 120, color: "#cd7f32", dark: "#a9642a" },
-  { tag: "SILVER", range: "60% – 74.9%", copy: { mr: "उत्कृष्टतेचा मजबूत पाया.", en: "Building a strong foundation of excellence." }, h: 170, color: "#a8a29e", dark: "#78716c" },
-  { tag: "GOLD", range: "75% – 89.9%", copy: { mr: "मजबूत व सातत्यपूर्ण कामगिरी.", en: "Strong and consistent performance." }, h: 220, color: "#f5b800", dark: "#c99100" },
-  { tag: "PLATINUM", range: "90% & Above", copy: { mr: "अपवादात्मक सर्वांगीण उत्कृष्टता.", en: "Exceptional all-round excellence." }, h: 270, color: "#ff7b00", dark: "#d46100" },
+type Step = {
+  tag: string;
+  range: string;
+  score: string;
+  copy: Bi;
+  h: number; // card min-height (desktop staircase)
+  from: string;
+  to: string;
+  pillText: string;
+  tagColor: string;
+  scoreBg: string;
+  scoreLabel: string;
+  scoreText: string;
+  light?: boolean;
+};
+
+const STEPS: Step[] = [
+  { tag: "BRONZE", range: "50% – 59.9%", score: "425 – 509", copy: { mr: "उत्कृष्टतेकडे अर्थपूर्ण पावले.", en: "Taking meaningful steps towards excellence." }, h: 390, from: "#f08a24", to: "#b8590f", pillText: "#5a2d08", tagColor: "#fff", scoreBg: "#fdebd2", scoreLabel: "#b8590f", scoreText: "#4a2305" },
+  { tag: "SILVER", range: "60% – 74.9%", score: "510 – 636", copy: { mr: "उत्कृष्टतेचा मजबूत पाया.", en: "Building a strong foundation of excellence." }, h: 420, from: "#a8a29e", to: "#6f6a67", pillText: "#2f2b29", tagColor: "#fff", scoreBg: "#f1efee", scoreLabel: "#6f6a67", scoreText: "#2f2b29" },
+  { tag: "GOLD", range: "75% – 89.9%", score: "637 – 764", copy: { mr: "मजबूत व सातत्यपूर्ण कामगिरी.", en: "Strong and consistent performance." }, h: 450, from: "#ffd21a", to: "#e59a00", pillText: "#5a3a00", tagColor: "#fff", scoreBg: "#fff3d0", scoreLabel: "#b87400", scoreText: "#4a2f00" },
+  { tag: "PLATINUM", range: "90% & Above", score: "765+", copy: { mr: "अपवादात्मक सर्वांगीण उत्कृष्टता.", en: "Exceptional all-round excellence." }, h: 480, from: "#ff9a1f", to: "#f25f00", pillText: "#4a1f05", tagColor: "#fff", scoreBg: "#ffeedd", scoreLabel: "#d4570a", scoreText: "#4a1f05" },
 ];
 
 export default function RecognitionLevels() {
@@ -29,15 +44,19 @@ export default function RecognitionLevels() {
         <div className={l.stairs}>
           {STEPS.map((p, i) => (
             <Reveal key={p.tag} delay={i * 120} className={l.stairWrap}>
-              <div className={l.stair}>
-                <div className={l.info}>
-                  {p.tag === "PLATINUM" && <Crown size={22} color={p.color} />}
-                  <span className={l.tag} style={{ color: p.dark }}>{p.tag}</span>
-                  <span className={l.range}>{p.range}</span>
-                  <p>{L(p.copy)}</p>
-                </div>
-                <div className={l.block} style={{ height: p.h, background: `linear-gradient(180deg, ${p.color}, ${p.dark})` }}>
-                  <span>{i + 1}</span>
+              <div
+                className={l.card}
+                style={{ ["--h" as string]: `${p.h}px`, background: `linear-gradient(180deg, ${p.from}, ${p.to})` }}
+              >
+                {p.tag === "PLATINUM" ? <Crown className={l.icon} strokeWidth={2.2} /> : <Star className={l.icon} strokeWidth={2.2} />}
+                <span className={l.tag} style={{ color: p.tagColor }}>{p.tag}</span>
+                <span className={l.pill} style={{ color: p.pillText }}>{p.range}</span>
+                <hr className={l.divider} />
+                <p className={l.copy}>{L(p.copy)}</p>
+                <div className={l.num}><i /><b>{i + 1}</b><i /></div>
+                <div className={l.score} style={{ background: p.scoreBg }}>
+                  <span style={{ color: p.scoreLabel }}>{L({ mr: "गुण", en: "Points Score" })}</span>
+                  <strong style={{ color: p.scoreText }}>{p.score}</strong>
                 </div>
               </div>
             </Reveal>
@@ -45,17 +64,7 @@ export default function RecognitionLevels() {
         </div>
 
         <Reveal>
-          <div className={s.tableWrap} style={{ maxWidth: 640, margin: "34px auto 0", textAlign: "left" }}>
-            <table className={s.tbl}>
-              <thead><tr><th>Level</th><th>{L({ mr: "टक्केवारी", en: "Percentage" })}</th><th>{L({ mr: "गुण", en: "Points Score" })}</th></tr></thead>
-              <tbody>
-                {awardLevels.map((r) => (
-                  <tr key={r.level.en}><td><strong>{L(r.level)}</strong></td><td>{r.pct}</td><td className={s.num}>{r.score}</td></tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <p className={s.note}>{L({ mr: "टीप: एकाच Level च्या आत, Bonus Points त्यांचा नेमका क्रम ठरवतात.", en: "Please Note: Inside the levels the bonus points will decide their exact position or sequence." })}</p>
+        
           <p className={s.em} style={{ marginTop: 14 }}>{L({ mr: "प्रत्येक Level महत्त्वाचे आहे. प्रत्येक पाऊल पुढे महत्त्वाचे आहे.", en: "Every level matters. Every step forward matters." })}</p>
         </Reveal>
       </div>

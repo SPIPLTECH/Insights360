@@ -209,7 +209,9 @@ export default function Hero() {
                         <span className={h.of}> / {TOTAL_ALC}</span>
                       </td>
                     ))}
-                    <td colSpan={4} />
+                    {LEVELS.map((lv) => (
+                      <td key={lv}><span className={h.lvNum}>{sum((r) => r.levels[lv])}</span></td>
+                    ))}
                     <td><span className={`${h.big} ${h.accent}`}>{awardedAll}</span><span className={h.totCap}>{L({ mr: "एकूण", en: "Total" })}</span></td>
                   </tr>
                 )}

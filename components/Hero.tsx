@@ -51,7 +51,7 @@ const pctOf = (n: number, d: number) => (d ? Math.min(100, Math.round((n / d) * 
 
 export default function Hero() {
   const { lang, L } = useLang();
-  const { data, error, loading, refresh, refreshing } = useDashboardData();
+  const { data, error, loading, refresh } = useDashboardData();
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
 
@@ -98,7 +98,7 @@ export default function Hero() {
         const I = LEVEL_ICON[lv];
         return (
           <span key={lv} className={r.levels[lv] ? h.lv : `${h.lv} ${h.lvOff}`} title={lv}>
-            <I size={11} strokeWidth={2.4} color={LEVEL_COLOR[lv]} />{lv[0]} {r.levels[lv]}
+            <I size={11} strokeWidth={2.4} color={LEVEL_COLOR[lv]} />{lv} {r.levels[lv]}
           </span>
         );
       })}
@@ -255,11 +255,6 @@ export default function Hero() {
 
         <p className={h.legend}>
           <span>{L({ mr: "उत्तीर्ण = किमान गुण पार:", en: "Cleared = minimum points met:" })}{" "}{IDX.map((n, i) => `I${n} ≥ ${MIN[i]}${i < 3 ? " · " : ""}`)}</span>
-          <span className={h.legendLv}>P Platinum · G Gold · S Silver · B Bronze</span>
-          <span className={h.live}>
-            <i className={refreshing ? h.pulse : ""} />
-            {data ? `${L({ mr: "अद्यतन", en: "Updated" })} ${new Date(data.fetchedAt).toLocaleTimeString("en-IN")}` : "…"}
-          </span>
         </p>
 
         {/* summary — below the fold, revealed on scroll */}

@@ -59,6 +59,14 @@
 .table th { padding: 7px 8px; text-align: center; background: linear-gradient(180deg,#ffc799,#ffab6e); color: #4a1f00; font-family: 'Fraunces','Noto Sans Devanagari',serif; font-size: 15.5px; font-weight: 700; border-right: 1px solid rgba(255,255,255,.55); vertical-align: middle; }
 .table th.awardTh { background: linear-gradient(180deg,#ffd6b3,#ffbb8a); border-right: none; }
 .table th small { display: block; font-family: 'Work Sans',sans-serif; font-size: 10.5px; font-weight: 500; opacity: .75; margin-top: 1px; }
+.table th.lvTh { font-family: 'Work Sans',sans-serif; font-size: 12px; font-weight: 700; padding: 6px 6px; background: linear-gradient(180deg,#ffe0c6,#ffcfa6); border-top: 1px solid rgba(255,255,255,.6); white-space: nowrap; }
+.table th.lvTh { display: table-cell; }
+.lvThIn { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; }
+.lvThIn svg { display: block; flex: none; margin: 0; }
+.totCap { display: block; font-family: 'Work Sans',sans-serif; font-size: 10px; font-weight: 600; color: #8a7a70; margin-top: 2px; }
+.table th.totTh { color: #ec1e63; }
+.lvNum { font-family: 'Fraunces',serif; font-size: 18px; font-weight: 700; color: #1a1310; line-height: 1; }
+.lvZero .lvNum { opacity: .35; }
 .thLink { display: block; color: inherit; text-decoration: none; border-radius: 10px; padding: 1px 6px; transition: background .2s ease; }
 .thLink:hover { background: rgba(255,255,255,.55); }
 .table td { padding: 5px 10px; text-align: center; border-top: 1px solid #ffe3cc; border-right: 1px dashed #ffe0c6; background: #fffaf5; transition: background .2s ease; }

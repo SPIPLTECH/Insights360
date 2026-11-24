@@ -147,19 +147,30 @@ export default function Hero() {
             <table className={h.table}>
               <thead>
                 <tr>
-                  <th className={h.left}>{L({ mr: "जिल्हे", en: "District" })}</th>
+                  <th className={h.left} rowSpan={2}>{L({ mr: "जिल्हे", en: "District" })}</th>
                   {IDX.map((n) => (
-                    <th key={n}>
+                    <th key={n} rowSpan={2}>
                       <Link href={`/index-${n}`} className={h.thLink}>
                         Index {n}
                         <small>{L({ mr: "उत्तीर्ण ALC", en: "ALCs cleared" })}</small>
                       </Link>
                     </th>
                   ))}
-                  <th className={h.awardTh}>
+                  <th className={h.awardTh} colSpan={5}>
                     {L({ mr: "पुरस्कार स्तर", en: "Award level" })}
                     <small>{L({ mr: "उत्तीर्ण ALC व कोणता", en: "Cleared & which" })}</small>
                   </th>
+                </tr>
+                <tr>
+                  {LEVELS.map((lv) => {
+                    const I = LEVEL_ICON[lv];
+                    return (
+                      <th key={lv} className={h.lvTh}>
+                        <span className={h.lvThIn}><I size={15} strokeWidth={2.4} color={LEVEL_COLOR[lv]} /><span>{lv}</span></span>
+                      </th>
+                    );
+                  })}
+                  <th className={`${h.lvTh} ${h.totTh}`}><span className={h.lvThIn}><Trophy size={15} strokeWidth={2.4} /><span>{L({ mr: "एकूण", en: "Total" })}</span></span></th>
                 </tr>
               </thead>
               <tbody>
@@ -167,7 +178,7 @@ export default function Hero() {
                   DISTRICTS.map((d) => (
                     <tr key={d}>
                       <td className={h.left}>{name(d)}</td>
-                      {[0, 1, 2, 3, 4].map((c) => <td key={c}><span className={h.skel} /></td>)}
+                      {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((c) => <td key={c}><span className={h.skel} /></td>)}
                     </tr>
                   ))}
 
@@ -182,12 +193,10 @@ export default function Hero() {
                           <div className={h.bar}><i style={{ width: `${pctOf(r.cleared[i], r.alcs)}%` }} /></div>
                         </td>
                       ))}
-                      <td>
-                        <div className={h.awardCell}>
-                          <span className={`${h.big} ${h.accent}`}>{r.awarded}</span>
-                          {chips(r)}
-                        </div>
-                      </td>
+                      {LEVELS.map((lv) => (
+                        <td key={lv} className={r.levels[lv] ? "" : h.lvZero}><span className={h.lvNum}>{r.levels[lv]}</span></td>
+                      ))}
+                      <td><span className={`${h.big} ${h.accent}`}>{r.awarded}</span></td>
                     </tr>
                   ))}
 
@@ -200,7 +209,8 @@ export default function Hero() {
                         <span className={h.of}> / {TOTAL_ALC}</span>
                       </td>
                     ))}
-                    <td><span className={`${h.big} ${h.accent}`}>{awardedAll}</span></td>
+                    <td colSpan={4} />
+                    <td><span className={`${h.big} ${h.accent}`}>{awardedAll}</span><span className={h.totCap}>{L({ mr: "एकूण", en: "Total" })}</span></td>
                   </tr>
                 )}
               </tbody>

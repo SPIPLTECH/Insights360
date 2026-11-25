@@ -2,7 +2,7 @@
    HERO — full-width, orange-toned, desktop table + mobile cards
    (colour theme unchanged: saffron / pink / leaf-green; hero chrome uses light orange)
    ===================================================================== */
-.hero { position: relative; max-width: 1480px; margin: 0 auto; padding: 8px 10px 46px; }
+.hero { position: relative; max-width: none; margin: 0; padding: 8px clamp(12px, 3.5vw, 56px) 46px; }
 /* full-bleed soft backdrop: orange / pink / green aurora + dotted canvas */
 .hero::before { content: ''; position: absolute; top: 0; bottom: 0; left: 50%; width: 100vw; margin-left: -50vw; z-index: 0; pointer-events: none;
   background:
@@ -20,8 +20,10 @@
 /* ---- banner carousel: exact 1413 / 255, full width ---- */
 .carousel { position: relative; z-index: 1; width: 100%; max-width: max(640px, calc((100svh - 575px) * 5.541)); margin: 0 auto; aspect-ratio: 1413 / 255; border-radius: 22px; overflow: hidden; background: linear-gradient(155deg,#ffe8da,#fff4ec);
   border: 2px solid rgba(255,255,255,.95); box-shadow: 0 14px 38px rgba(245,118,46,.28), 0 0 0 1px rgba(245,118,46,.35); }
-.slide { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0; transform: scale(1.05); transition: opacity 1.4s ease-in-out, transform 6s ease-out; }
-.slideOn { opacity: 1; transform: scale(1); }
+.slide { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; display: block; opacity: 0; transition: opacity 1.4s ease-in-out; }
+.slideBg { position: absolute; inset: -12%; width: 124%; height: 124%; object-fit: cover; filter: blur(16px) saturate(1.1); opacity: 0; transition: opacity 1.4s ease-in-out; }
+.slideBgOn { opacity: 1; }
+.slideOn { opacity: 1; }
 .arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 38px; height: 38px; border-radius: 50%; border: none; cursor: pointer; display: grid; place-items: center; background: rgba(255,255,255,.92); color: #1a1310; opacity: 0; transition: opacity .25s ease, transform .2s ease; z-index: 3; box-shadow: 0 4px 12px rgba(0,0,0,.18); }
 .arrow:hover { transform: translateY(-50%) scale(1.08); }
 .carousel:hover .arrow { opacity: 1; }

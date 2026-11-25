@@ -1,0 +1,37 @@
+.hero { padding-top: 56px; padding-bottom: 28px; }
+.sum { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 26px; }
+.sumCard { display: flex; flex-direction: column; gap: 4px; padding: 18px 16px; border-radius: 18px; background: #fff; border: 2px solid #ffd6b5; text-decoration: none; color: inherit; text-align: center; transition: transform .2s ease, box-shadow .2s ease; box-shadow: 0 8px 24px rgba(245,118,46,.10); }
+.sumCard:hover { transform: translateY(-3px); box-shadow: 0 14px 30px rgba(245,118,46,.22); }
+.sumCard b { font-family: 'Fraunces', serif; font-size: 34px; line-height: 1; color: var(--c, #f5762e); }
+.sumCard span { font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #8a7a70; }
+.sumCard strong { font-size: 14px; color: #1a1310; }
+.sumCard small { font-size: 12px; color: #8a7a70; }
+
+.block { margin-top: 26px; }
+.block h3 { font-family: 'Fraunces', serif; font-size: 20px; margin: 0 0 10px; color: #1a1310; }
+.block p { margin: 0 0 10px; line-height: 1.7; color: #4a3f38; }
+.formula { display: block; margin: 10px 0 14px; padding: 12px 16px; border-radius: 14px; background: #fff3e8; border: 1px dashed #ffb27a; font-family: 'Work Sans', sans-serif; font-weight: 700; font-size: 14.5px; color: #4a1f00; line-height: 1.6; }
+.steps { margin: 0; padding: 0; list-style: none; counter-reset: st; display: grid; gap: 10px; }
+.steps li { counter-increment: st; position: relative; padding: 12px 14px 12px 52px; border-radius: 14px; background: #fff; border: 1px solid #ffe0c6; line-height: 1.6; color: #4a3f38; }
+.steps li::before { content: counter(st); position: absolute; left: 14px; top: 11px; width: 26px; height: 26px; border-radius: 50%; background: linear-gradient(135deg, #f5762e, #ec1e63); color: #fff; font-weight: 700; font-size: 13px; display: grid; place-items: center; }
+.example { margin-top: 14px; padding: 14px 16px; border-radius: 14px; background: #eefaf1; border: 1px solid #b9e6c6; color: #14532d; line-height: 1.7; }
+.example b { color: #0b3d1e; }
+.split { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+.pill { display: inline-block; padding: 2px 10px; border-radius: 100px; font-size: 12px; font-weight: 700; background: #fff; border: 1px solid #ffd6b5; color: #4a3f38; }
+.cta { margin-top: 22px; display: flex; flex-wrap: wrap; gap: 10px; }
+@media (max-width: 900px) { .sum { grid-template-columns: repeat(2, 1fr); } .split { grid-template-columns: 1fr; } }
+
+@media (max-width: 640px) {
+  .hero { padding-top: 36px; padding-bottom: 12px; }
+  .sum { gap: 10px; margin-top: 18px; }
+  .sumCard { padding: 14px 10px; }
+  .sumCard b { font-size: 28px; }
+  .sumCard strong { font-size: 13px; }
+  .block { margin-top: 18px; }
+  .block h3 { font-size: 17px; }
+  .formula { font-size: 13px; padding: 10px 12px; overflow-wrap: anywhere; }
+  .steps li { padding: 11px 12px 11px 46px; font-size: 14px; }
+  .steps li::before { left: 11px; }
+  .example { font-size: 14px; padding: 12px; }
+  .split { gap: 14px; }
+}

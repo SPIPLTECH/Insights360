@@ -1,3 +1,4 @@
+import ScrollX from "@/components/shared/ScrollX";
 import type { RecommendationRow } from "@/lib/recommendations";
 
 /**
@@ -60,7 +61,7 @@ export default function RecommendationTable({
   overall?: boolean;
 }) {
   return (
-    <div className="overflow-x-auto">
+    <ScrollX className="overflow-x-auto">
       <table className="w-full text-sm border-collapse">
         <thead>
           <tr className="bg-brand-orange/10 text-brand-orange text-left">
@@ -153,6 +154,6 @@ export default function RecommendationTable({
           )}
         </tbody>
       </table>
-    </div>
+    </ScrollX>
   );
 }

@@ -1,4 +1,5 @@
 "use client";
+import ScrollX from "@/components/shared/ScrollX";
 
 import { PARAM_LABEL, ParamKey } from "@/components/dcu/constants";
 
@@ -101,7 +102,7 @@ export default function OverviewView({
 
       <div>
         <h3 className="text-sm font-semibold text-slate-600 mb-3">By district</h3>
-        <div className="overflow-x-auto">
+        <ScrollX className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="text-left text-xs uppercase text-slate-400 border-b border-slate-100">
@@ -134,7 +135,7 @@ export default function OverviewView({
               ) : null}
             </tbody>
           </table>
-        </div>
+        </ScrollX>
       </div>
     </div>
   );

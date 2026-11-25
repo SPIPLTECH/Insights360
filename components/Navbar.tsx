@@ -12,6 +12,7 @@ const LINKS: { label: Bi; href: string; match: (p: string) => boolean }[] = [
   { label: { mr: "मुख्यपृष्ठ", en: "Home" }, href: "/", match: (p) => p === "/" },
   { label: { mr: "फ्रेमवर्क", en: "Framework" }, href: "/#framework", match: () => false },
   { label: { mr: "लेव्हल्स", en: "Levels" }, href: "/#levels", match: () => false },
+  { label: { mr: "गुण विभाजन", en: "Scoring Breakdown" }, href: "/scoring-breakdown", match: (p) => p.startsWith("/scoring-breakdown") },
   { label: { mr: "घोषणा", en: "Announcements" }, href: "/announcements", match: (p) => p.startsWith("/announcements") },
 ];
 

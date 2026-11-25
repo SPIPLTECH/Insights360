@@ -1,3 +1,7 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import ScrollX from "@/components/shared/ScrollX";
 import type { DisplayColumn, DisplayRow } from "@/lib/sheetView";
 
 /**
@@ -75,13 +79,15 @@ const FROZEN_FIELDS: { field: string; width: number }[] = [
   { field: "Area", width: 90 },
 ];
 
-function buildFrozenMap(columns: DisplayColumn[], startLeft = 0) {
+function buildFrozenMap(columns: DisplayColumn[], startLeft = 0, mobile = false) {
   const map = new Map<number, { width: number; left: number }>();
   let left = startLeft;
-  for (let i = 0; i < FROZEN_FIELDS.length; i++) {
+  // On phones only "ALC Code" stays pinned (the 4 pinned columns would fill the whole screen and leave no room to scroll).
+  const count = mobile ? 1 : FROZEN_FIELDS.length;
+  for (let i = 0; i < count; i++) {
     const col = columns[i];
     if (!col || col.field.toLowerCase() !== FROZEN_FIELDS[i].field.toLowerCase()) break;
-    const { width } = FROZEN_FIELDS[i];
+    const width = mobile ? 84 : FROZEN_FIELDS[i].width;
     map.set(col.index, { width, left });
     left += width;
   }
@@ -140,6 +146,17 @@ export default function SheetTable({
   /** ALC Code -> Rank. Keeps rank fixed while filters are applied. */
   rankMap?: Map<string, number>;
 }) {
+  // Phones: pin fewer columns so there is room to actually scroll sideways.
+  const [mobile, setMobile] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    const on = () => setMobile(mq.matches);
+    on();
+    mq.addEventListener("change", on);
+    return () => mq.removeEventListener("change", on);
+  }, []);
+  const rankW = mobile ? 52 : RANK_WIDTH;
+
   if (columns.length === 0) {
     return <div className="p-10 text-center text-slate-400 text-sm">Sheet structure could not be read.</div>;
   }
@@ -250,13 +267,13 @@ export default function SheetTable({
 
   // When the Rank column is shown, the other frozen columns shift right
   // by RANK_WIDTH so they sit right after it.
-  const frozenMap = buildFrozenMap(columnsToRender, showRank ? RANK_WIDTH : 0);
+  const frozenMap = buildFrozenMap(columnsToRender, showRank ? rankW : 0, mobile);
 
   const rankStyle = (zIndex: number) => ({
     position: "sticky" as const,
     left: 0,
-    width: RANK_WIDTH,
-    minWidth: RANK_WIDTH,
+    width: rankW,
+    minWidth: rankW,
     zIndex,
   });
 
@@ -267,7 +284,7 @@ export default function SheetTable({
     // page/window scroll (which an "overflow-x-auto"-only wrapper silently
     // hijacks as its scroll reference, causing the header to float in the
     // wrong place).
-    <div className="overflow-auto max-h-[70vh] rounded-b-2xl border-t border-slate-100">
+    <ScrollX className="overflow-auto max-h-[70vh] rounded-b-2xl border-t border-slate-100">
       <table className="w-full text-sm border-collapse">
         <thead className="bg-white" style={{ position: "sticky", top: 0, zIndex: 20 }}>
           {levelRows.map((spans, i) => (
@@ -443,6 +460,6 @@ export default function SheetTable({
           )}
         </tbody>
       </table>
-    </div>
+    </ScrollX>
   );
 }

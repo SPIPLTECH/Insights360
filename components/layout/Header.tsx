@@ -2,14 +2,14 @@ import Image from "next/image";
 
 export default function Header() {
   return (
-    <header className="w-full">
-      {/* Full-width Banner — static, single image, no margin/padding/rounded corners */}
-      <div className="relative w-full h-[120px] sm:h-[250px] md:h-[190px] lg:h-[190px] overflow-hidden">
+    <header className="w-full px-3 pt-3 md:px-6 lg:px-10">
+      {/* Banner keeps its own proportions (2172 × 355) so it is NEVER cropped on any screen — it just scales down on phones. */}
+      <div className="relative w-full max-w-5xl mx-auto overflow-hidden rounded-xl md:rounded-2xl shadow-md" style={{ aspectRatio: "2172 / 355" }}>
         <Image
           src="/banner1.png"
-          alt="Banner"
+          alt="Race to Recognition"
           fill
-          className="object-cover"
+          className="object-contain"
           priority
           sizes="100vw"
         />

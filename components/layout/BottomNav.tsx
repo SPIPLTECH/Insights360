@@ -17,7 +17,7 @@ export default function BottomNav() {
   const pathname = usePathname();
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-40">
-      <div className="max-w-7xl mx-auto grid grid-cols-5">
+      <div className="w-full grid grid-cols-5">
         {items.map(({ href, label, sub, icon: Icon, iconColor, textColor }) => {
           const active = pathname === href;
           return (

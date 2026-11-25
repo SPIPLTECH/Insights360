@@ -110,8 +110,12 @@ export default function Hero() {
       {/* ---------- banner carousel (1413 : 255) ---------- */}
       <div className={`${h.carousel} ${h.rise}`} style={rise(0)} onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
         {IMAGES.map((src, i) => (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img key={src} src={src} width={1413} height={255} alt={`Vidarbha East highlight ${i + 1}`} className={`${h.slide} ${i === active ? h.slideOn : ""}`} />
+          <span key={src}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={src} alt="" aria-hidden="true" className={`${h.slideBg} ${i === active ? h.slideBgOn : ""}`} />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={src} alt={`Vidarbha East highlight ${i + 1}`} className={`${h.slide} ${i === active ? h.slideOn : ""}`} />
+          </span>
         ))}
         <button className={`${h.arrow} ${h.arrowL}`} onClick={prev} aria-label="Previous"><ChevronLeft size={20} /></button>
         <button className={`${h.arrow} ${h.arrowR}`} onClick={next} aria-label="Next"><ChevronRight size={20} /></button>

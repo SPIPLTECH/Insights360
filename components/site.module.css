@@ -37,8 +37,8 @@
 .shell p { margin: 0 0 12px; line-height: 1.75; color: var(--ink-2); font-size: 15px; }
 
 /* ============ SECTION BLOCKS ============ */
-.section { padding: 56px 28px; position: relative; scroll-margin-top: 84px; }
-.inner { max-width: 1120px; margin: 0 auto; position: relative; }
+.section { padding: 56px clamp(16px, 4vw, 64px); position: relative; scroll-margin-top: 84px; }
+.inner { max-width: none; margin: 0; position: relative; }
 .center { text-align: center; }
 .tint { background: linear-gradient(180deg, var(--cream), var(--cream-2)); border-block: 1px solid var(--line); }
 .green { background: linear-gradient(180deg, #f3fbf5, #e7f6ec); border-block: 1px solid rgba(30, 142, 62, 0.18); }

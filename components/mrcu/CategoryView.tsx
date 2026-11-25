@@ -1,4 +1,5 @@
 "use client";
+import ScrollX from "@/components/shared/ScrollX";
 
 import { Fragment, useMemo, useState } from "react";
 import { PARAM_LABEL, ParamKey } from "@/components/dcu/constants";
@@ -136,7 +137,7 @@ export default function CategoryView({
         </div>
       ) : null}
 
-      <div className="overflow-x-auto">
+      <ScrollX className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="text-left text-xs uppercase text-slate-400 border-b border-slate-100">
@@ -264,7 +265,7 @@ export default function CategoryView({
             ) : null}
           </tbody>
         </table>
-      </div>
+      </ScrollX>
     </div>
   );
 }

@@ -60,7 +60,17 @@ export function buildSheetView(sheet: ParsedSheet, sortByTotalDesc = false): She
           const n = parseFloat(r.cells[i]);
           return sum + (isNaN(n) ? 0 : n);
         }, 0);
-      rows.sort((a, b) => totalOf(b) - totalOf(a));
+      // Tie-breaker: jab Total Points barabar ho, jiska Bonus Points
+      // zyada ho woh upar (higher rank). Bonus bhi barabar ho to sheet
+      // ka original order hi rehta hai (stable sort).
+      const bonusColIndexes = columns.filter((c) => c.isBonus).map((c) => c.index);
+      const bonusOf = (r: DisplayRow) =>
+        columns.reduce((sum, col, i) => {
+          if (!bonusColIndexes.includes(col.index)) return sum;
+          const n = parseFloat(r.cells[i]);
+          return sum + (isNaN(n) ? 0 : n);
+        }, 0);
+      rows.sort((a, b) => totalOf(b) - totalOf(a) || bonusOf(b) - bonusOf(a));
     }
   }
 

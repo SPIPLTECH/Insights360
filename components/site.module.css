@@ -38,7 +38,11 @@
 
 /* ============ SECTION BLOCKS ============ */
 .section { padding: 56px clamp(16px, 4vw, 64px); position: relative; scroll-margin-top: 84px; }
-.inner { max-width: none; margin: 0; position: relative; }
+.inner { max-width: 1200px; margin: 0 auto; position: relative; }
+/* Section headings (label / title / intro) sit centered on every page, even where the section itself is not .center */
+.inner > .reveal > .label { display: flex; width: fit-content; margin-inline: auto; }
+.inner > .reveal > .h2 { text-align: center; }
+.inner > .reveal > .lead { text-align: center; margin-inline: auto; }
 .center { text-align: center; }
 .tint { background: linear-gradient(180deg, var(--cream), var(--cream-2)); border-block: 1px solid var(--line); }
 .green { background: linear-gradient(180deg, #f3fbf5, #e7f6ec); border-block: 1px solid rgba(30, 142, 62, 0.18); }

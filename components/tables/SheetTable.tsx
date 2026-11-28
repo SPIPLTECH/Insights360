@@ -34,9 +34,9 @@ import type { DisplayColumn, DisplayRow } from "@/lib/sheetView";
  *   points number itself. No data/calculation change — purely display.
  *
  * hideBonusColumn (opt-in, used ONLY by Home Dashboard):
- * - Removes every "Bonus Points" column entirely (each per-index section's
- *   own Bonus Points AND the grand-total "Bonus Points" column) from
- *   header + body. No data/calculation change — purely display.
+ * - Removes the per-index "Bonus Points" columns (inside Index 1-4) but
+ *   KEEPS the grand-total bonus column, shown as "Total B. Points"
+ *   between "Total Points(850)" and "Level". No data/calculation change.
  *
  * hideTotalCap (opt-in, used ONLY by Home Dashboard):
  * - Removes the "/850" (max points) suffix from every Total Points cell,
@@ -94,7 +94,9 @@ function buildFrozenMap(columns: DisplayColumn[], startLeft = 0, mobile = false)
   return map;
 }
 
-function displayFieldLabel(field: string) {
+function displayFieldLabel(field: string, groupPath: string[] = [], grandTotalBonus = false) {
+  // Home Dashboard only: the grand-total bonus column (no Index group above it) -> "Total B. Points"
+  if (grandTotalBonus && /^bonus points$/i.test(field) && groupPath.length === 0) return "Total B. Points";
   if (/^bonus points$/i.test(field)) return "B.Points";
   if (/^eligible\/not eligible$/i.test(field)) return "Eligibility Status";
   return field;
@@ -130,8 +132,8 @@ export default function SheetTable({
   columns: DisplayColumn[];
   rows: DisplayRow[];
   hideEligibilityColumn?: boolean;
-  /** Removes every "Bonus Points" column (per-section AND the grand-total
-   * one) entirely from header + body. Opt-in, used by Home Dashboard. */
+  /** Removes the per-index "Bonus Points" columns; the grand-total one
+   * ("Total B. Points") stays. Opt-in, used by Home Dashboard. */
   hideBonusColumn?: boolean;
   /** Hides the small "/850" (max points) suffix shown next to every
    * Total Points value. Opt-in, used ONLY by Home Dashboard (the header
@@ -184,7 +186,7 @@ export default function SheetTable({
   // columns.
   const columnsToRender = columns.filter((c) => {
     if (hideEligibilityColumn && isEligibilityCol(c)) return false;
-    if (hideBonusColumn && isBonusCol(c)) return false;
+    if (hideBonusColumn && isBonusCol(c) && c.groupPath.length > 0) return false;
     return true;
   });
 
@@ -340,7 +342,7 @@ export default function SheetTable({
                       g.label ? topLevelColor.get(g.label) ?? "bg-slate-50 text-slate-600" : "bg-slate-50 text-slate-600"
                     }`}
                   >
-                    {lifted ? displayFieldLabel(g.startCol.field) : g.label}
+                    {lifted ? displayFieldLabel(g.startCol.field, g.startCol.groupPath, hideBonusColumn) : g.label}
                   </th>
                 );
               })}
@@ -361,7 +363,7 @@ export default function SheetTable({
               return (
                 <th
                   key={col.index}
-                  title={isBonusCol(col) ? "Bonus Points" : undefined}
+                  title={isBonusCol(col) ? (hideBonusColumn && col.groupPath.length === 0 ? "Total Bonus Points" : "Bonus Points") : undefined}
                   style={
                     frozen
                       ? { position: "sticky", left: frozen.left, width: frozen.width, minWidth: frozen.width, zIndex: 30 }
@@ -371,7 +373,7 @@ export default function SheetTable({
                     col
                   )} ${isNameCol(col) ? "text-left" : ""}`}
                 >
-                  {hidePointsLabel && isPointsCol(col) ? "" : displayFieldLabel(col.field)}
+                  {hidePointsLabel && isPointsCol(col) ? "" : displayFieldLabel(col.field, col.groupPath, hideBonusColumn)}
                 </th>
               );
             })}

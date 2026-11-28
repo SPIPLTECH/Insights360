@@ -24,7 +24,7 @@ const bi = (mr: string, en: string): Bi => ({ mr, en });
 function Head({ n, title, pts, id }: { n: number; title: Bi; pts: number; id: string }) {
   const { L } = useLang();
   return (
-    <div id={id}>
+    <div id={id} style={{ textAlign: "center" }}>
       <span className={s.label}>Index {n}</span>
       <h2 className={s.h2}>{L(title)}</h2>
       <span className={b.pill}>{pts} {L(bi("गुण", "points"))}</span>
